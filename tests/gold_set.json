@@ -1,0 +1,9 @@
+[
+  {
+    "id": "001",
+    "scenario": "A German hospital accidentally emails patient test results to the wrong patient.",
+    "expected_articles": ["5(1)(f)", "32", "33", "34"],
+    "expected_laws": ["BDSG §22"],
+    "notes": "Personal data breach — security + notification obligations."
+  }
+]

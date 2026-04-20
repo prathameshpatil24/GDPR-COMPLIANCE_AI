@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# uv
+.uv/
+
+# Environment
+.env
+.env.local
+
+# Data (too big for git, regeneratable)
+data/raw/
+data/processed/
+data/chroma/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
