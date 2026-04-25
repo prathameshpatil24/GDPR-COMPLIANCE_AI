@@ -5,9 +5,10 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import sys
+import re
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from rich.console import Console
 from rich.table import Table
@@ -16,8 +17,8 @@ from gdpr_ai.config import settings
 from gdpr_ai.evaluation import (
     estimate_eval_run_cost_eur,
     load_gold_scenarios,
-    scenario_metrics,
     load_indexed_article_keys,
+    normalize_article_ref,
 )
 from gdpr_ai.pipeline import run_pipeline
 
@@ -25,6 +26,70 @@ console = Console()
 ROOT = Path(__file__).resolve().parents[1]
 GOLD_PATH = ROOT / "gold" / "test_scenarios.yaml"
 OUT_PATH = ROOT / "logs" / "eval_results.json"
+
+
+def _article_key(label: str) -> str:
+    """Normalize a citation for scoring (EDPB ``n/yyyy`` ids, then GDPR helpers)."""
+    s = (label or "").strip()
+    m_edpb = re.search(r"\b(\d{1,2}/\d{4})\b", s)
+    if m_edpb:
+        return m_edpb.group(1)
+    return normalize_article_ref(s)
+
+
+def _calibrated_metrics(
+    expected: list[str],
+    acceptable_extras: list[str],
+    violations: list[Any],
+    kb_keys: set[str],
+) -> dict[str, Any]:
+    """Precision/recall/F1 with extras that count neither as TP nor as FP.
+
+    Precision uses only unexpected citations (output minus expected minus acceptable)
+    in the denominator so legitimate secondary hits are not penalised.
+    """
+    exp = {_article_key(x) for x in expected}
+    acc = {_article_key(x) for x in acceptable_extras}
+    act = {_article_key(v.article_reference) for v in violations}
+    correct = act & exp
+    unexpected = act - exp - acc
+
+    denom = len(correct) + len(unexpected)
+    if denom == 0:
+        precision = 1.0
+    else:
+        precision = len(correct) / denom
+
+    if not exp:
+        recall = 1.0
+    else:
+        recall = len(correct) / len(exp)
+
+    if precision + recall > 0:
+        f1 = 2 * precision * recall / (precision + recall)
+    else:
+        f1 = 0.0
+
+    hallucinations = 0
+    for v in violations:
+        raw_cite = v.article_reference.strip()
+        key = _article_key(raw_cite)
+        if key in exp or key in acc:
+            continue
+        if raw_cite in kb_keys or raw_cite.lower() in kb_keys or key in kb_keys:
+            continue
+        hallucinations += 1
+
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "hallucinations": hallucinations,
+        "expected_keys": sorted(exp),
+        "actual_keys": sorted(act),
+        "acceptable_keys": sorted(acc),
+        "unexpected_keys": sorted(unexpected),
+    }
 
 
 def _parse_args() -> argparse.Namespace:
@@ -55,7 +120,13 @@ async def _eval_rows(rows: list[dict], kb_keys: set[str]) -> list[dict]:
         sid = row["id"]
         console.print(f"Evaluating {sid} …")
         report = await run_pipeline(str(row["scenario"]))
-        m = scenario_metrics(list(row.get("expected_articles", [])), report.violations, kb_keys)
+        acceptable = list(row.get("acceptable_extras") or [])
+        m = _calibrated_metrics(
+            list(row.get("expected_articles", [])),
+            acceptable,
+            report.violations,
+            kb_keys,
+        )
         out.append(
             {
                 "id": sid,
@@ -67,6 +138,8 @@ async def _eval_rows(rows: list[dict], kb_keys: set[str]) -> list[dict]:
                 "hallucinations": m["hallucinations"],
                 "expected_keys": m["expected_keys"],
                 "actual_keys": m["actual_keys"],
+                "acceptable_keys": m["acceptable_keys"],
+                "unexpected_keys": m["unexpected_keys"],
                 "violations_count": len(report.violations),
             }
         )
@@ -98,7 +171,9 @@ async def _amain() -> int:
 
     kb_keys = load_indexed_article_keys()
     if not kb_keys:
-        console.print("[yellow]Warning: empty Chroma index — hallucination counts may be unreliable.[/yellow]")
+        console.print(
+            "[yellow]Warning: empty Chroma index — hallucination counts may be unreliable.[/yellow]"
+        )
 
     per = await _eval_rows(rows, kb_keys)
 
@@ -117,6 +192,7 @@ async def _amain() -> int:
             {
                 "run_id": run_id,
                 "scenario_count": len(per),
+                "scoring": "calibrated_precision_with_acceptable_extras",
                 "aggregate": {
                     "precision": agg_prec,
                     "recall": agg_rec,
@@ -159,7 +235,10 @@ async def _amain() -> int:
     console.print(f"Wrote {OUT_PATH}")
 
     if agg_prec < 0.8 or agg_rec < 0.7 or total_hallu > 0:
-        console.print("[red]Threshold breach: need precision ≥0.8, recall ≥0.7, zero hallucinations.[/red]")
+        console.print(
+            "[red]Threshold breach: need precision ≥0.8, recall ≥0.7, "
+            "zero hallucinations.[/red]"
+        )
         return 1
     return 0
 
