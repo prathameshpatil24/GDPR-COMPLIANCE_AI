@@ -1,0 +1,272 @@
+# Hand-curated gold scenarios (v1). expected_articles must be indexed in the KB.
+scenarios:
+  - id: "SC-001"
+    title: "Marketing emails without consent"
+    scenario: >
+      A retailer emails marketing offers to customers who only accepted terms of service
+      but never ticked a marketing consent box.
+    expected_articles: ["Art. 6", "Art. 7", "Art. 21"]
+    expected_topics: ["consent", "direct-marketing"]
+    difficulty: "easy"
+
+  - id: "SC-002"
+    title: "Data breach without notification"
+    scenario: >
+      A company suffers a ransomware attack exposing 50,000 customer records including names,
+      emails, and payment data. They do not notify the supervisory authority or affected individuals.
+    expected_articles: ["Art. 33", "Art. 34"]
+    expected_topics: ["security-and-breaches", "notification-to-dpa", "notification-to-subjects"]
+    difficulty: "easy"
+
+  - id: "SC-003"
+    title: "Refusing erasure request"
+    scenario: >
+      A user requests deletion of their account and associated activity data, but the company
+      refuses and keeps the data for advertising analytics.
+    expected_articles: ["Art. 17"]
+    expected_topics: ["erasure", "data-subject-rights"]
+    difficulty: "easy"
+
+  - id: "SC-004"
+    title: "No privacy notice provided"
+    scenario: >
+      A mobile app collects location and contact data at install but provides no privacy notice
+      or information about purposes or retention.
+    expected_articles: ["Art. 13", "Art. 14"]
+    expected_topics: ["information", "transparency"]
+    difficulty: "easy"
+
+  - id: "SC-005"
+    title: "Collecting excessive data"
+    scenario: >
+      An employer requires full medical histories from all applicants for administrative roles
+      where health data is unnecessary.
+    expected_articles: ["Art. 5", "Art. 6"]
+    expected_topics: ["legal-basis", "special-categories"]
+    difficulty: "easy"
+
+  - id: "SC-006"
+    title: "No DPO appointed when required"
+    scenario: >
+      A hospital systematically processes health data at scale for several wards but has not
+      appointed a data protection officer despite mandatory conditions being met.
+    expected_articles: ["Art. 37"]
+    expected_topics: ["dpo", "special-categories"]
+    difficulty: "easy"
+
+  - id: "SC-007"
+    title: "No DPIA for high-risk processing"
+    scenario: >
+      A city deploys city-wide facial recognition in public transport for profiling frequent
+      travellers without conducting a data protection impact assessment.
+    expected_articles: ["Art. 35", "Art. 9"]
+    expected_topics: ["dpia", "special-categories"]
+    difficulty: "easy"
+
+  - id: "SC-008"
+    title: "Children's data without parental consent"
+    scenario: >
+      A social app for children under 13 allows registration with only a self-declared birth
+      date and processes behavioural data for ads without verifiable parental consent.
+    expected_articles: ["Art. 8", "Art. 6"]
+    expected_topics: ["children", "consent"]
+    difficulty: "easy"
+
+  - id: "SC-009"
+    title: "No lawful basis for processing"
+    scenario: >
+      A startup ingests purchased email lists and sends product announcements without consent,
+      contract, legitimate interest analysis, or other documented basis.
+    expected_articles: ["Art. 6"]
+    expected_topics: ["legal-basis", "consent"]
+    difficulty: "easy"
+
+  - id: "SC-010"
+    title: "Denying subject access request"
+    scenario: >
+      A bank tells a customer that access requests are only processed once per year and refuses
+      a second request without invoking any statutory exception.
+    expected_articles: ["Art. 15", "Art. 12"]
+    expected_topics: ["access", "data-subject-rights"]
+    difficulty: "easy"
+
+  - id: "SC-011"
+    title: "Third-party data sharing without informing subjects"
+    scenario: >
+      A retailer obtains personal data from a data broker and begins profiling purchases without
+      providing the information required where data were not obtained from the data subject.
+    expected_articles: ["Art. 14", "Art. 26"]
+    expected_topics: ["information", "controller-processor"]
+    difficulty: "medium"
+
+  - id: "SC-012"
+    title: "Employee monitoring without transparency"
+    scenario: >
+      A German employer monitors employee emails and keystrokes without prior notice, policy update,
+      or involvement of employee representation where required.
+    expected_articles: ["Art. 5", "Art. 6", "Art. 13"]
+    expected_topics: ["employment", "transparency", "legal-basis"]
+    difficulty: "medium"
+
+  - id: "SC-013"
+    title: "Transfer to US without adequate safeguards"
+    scenario: >
+      A German SaaS vendor moves customer support tickets with personal data to a US analytics
+      provider without standard contractual clauses, BCRs, or an adequacy decision.
+    expected_articles: ["Art. 44", "Art. 46"]
+    expected_topics: ["transfers"]
+    difficulty: "medium"
+
+  - id: "SC-014"
+    title: "Legitimate interest without balancing test"
+    scenario: >
+      A telecom monetises detailed location trails for ad partners claiming legitimate interest
+      but has no documented balancing test or meaningful opt-out beyond marketing toggles.
+    expected_articles: ["Art. 6", "Art. 21"]
+    expected_topics: ["legitimate-interest", "object"]
+    difficulty: "medium"
+
+  - id: "SC-015"
+    title: "Automated decision-making without human review"
+    scenario: >
+      An online insurer automatically rejects life insurance applicants with no human review,
+      no meaningful information about the logic, and no right to contest effectively.
+    expected_articles: ["Art. 22"]
+    expected_topics: ["automated-decisions"]
+    difficulty: "medium"
+
+  - id: "SC-016"
+    title: "Retaining data beyond stated purpose"
+    scenario: >
+      A loyalty programme keeps transaction data indefinitely after the stated purpose was
+      annual reward calculation, with no retention review.
+    expected_articles: ["Art. 5"]
+    expected_topics: ["legal-basis"]
+    difficulty: "medium"
+
+  - id: "SC-017"
+    title: "Processor exceeds controller instructions"
+    scenario: >
+      A payroll processor runs its own analytics on employee data and shares insights with
+      third parties beyond the controller's documented instructions.
+    expected_articles: ["Art. 28"]
+    expected_topics: ["controller-processor"]
+    difficulty: "medium"
+
+  - id: "SC-018"
+    title: "Cookie tracking without consent"
+    scenario: >
+      A news site drops non-essential tracking cookies before any user choice and maps reading
+      habits to ad profiles without a valid consent flow.
+    expected_articles: ["Art. 6", "Art. 7"]
+    expected_topics: ["consent", "telemedia"]
+    known_gaps: ["ePrivacy Directive"]
+    difficulty: "medium"
+
+  - id: "SC-019"
+    title: "Repurposing data without new basis"
+    scenario: >
+      A charity uses donor emails collected for disaster relief to solicit unrelated political
+      donations without a new legal basis or transparency update.
+    expected_articles: ["Art. 5", "Art. 6"]
+    expected_topics: ["legal-basis", "consent"]
+    difficulty: "medium"
+
+  - id: "SC-020"
+    title: "No records of processing activities"
+    scenario: >
+      A mid-size manufacturer profiles suppliers at scale but maintains no Article 30 records
+      despite regular complex processing.
+    expected_articles: ["Art. 30"]
+    expected_topics: ["controller-processor"]
+    difficulty: "medium"
+
+  - id: "SC-021"
+    title: "Lead supervisory authority unclear"
+    scenario: >
+      A multinational processes data across several EU establishments with conflicting views on
+      main establishment and no clear lead authority cooperation.
+    expected_articles: ["Art. 56"]
+    expected_topics: ["controller-processor"]
+    difficulty: "hard"
+
+  - id: "SC-022"
+    title: "Health data for research without Article 9 ground"
+    scenario: >
+      A hospital reuse pipeline moves identifiable patient cohorts into a commercial research
+      project without Article 9 grounds or Article 89 safeguards.
+    expected_articles: ["Art. 9", "Art. 89"]
+    expected_topics: ["special-categories"]
+    difficulty: "hard"
+
+  - id: "SC-023"
+    title: "Pseudonymised data re-identification risk"
+    scenario: >
+      A vendor stores pseudonymised clickstreams but retains a wide re-linking key in the same
+      environment without technical measures against re-identification.
+    expected_articles: ["Art. 4", "Art. 25"]
+    expected_topics: ["controller-processor", "security-of-processing"]
+    difficulty: "hard"
+
+  - id: "SC-024"
+    title: "Joint controllers disagree on requests"
+    scenario: >
+      Two brands run a joint loyalty programme but give conflicting answers to access requests
+      and fail to arrange a single contact point in the arrangement.
+    expected_articles: ["Art. 26"]
+    expected_topics: ["information", "data-subject-rights"]
+    difficulty: "hard"
+
+  - id: "SC-025"
+    title: "Portability for inferred profile data"
+    scenario: >
+      A user requests portability of an AI-inferred spending propensity score; the controller
+      refuses to provide any structured export of that profile.
+    expected_articles: ["Art. 20"]
+    expected_topics: ["portability"]
+    difficulty: "hard"
+
+  - id: "SC-026"
+    title: "Facial recognition in retail"
+    scenario: >
+      A retailer deploys facial recognition in stores for security and marketing, claiming
+      legitimate interest, without DPIA transparency or special-category safeguards.
+    expected_articles: ["Art. 6", "Art. 9", "Art. 35"]
+    expected_topics: ["legitimate-interest", "special-categories", "dpia"]
+    difficulty: "hard"
+
+  - id: "SC-027"
+    title: "Objection to credit profiling"
+    scenario: >
+      A credit bureau continues automated profiling for scoring after an explicit objection
+      without demonstrating compelling grounds overriding the data subject's interests.
+    expected_articles: ["Art. 21", "Art. 22"]
+    expected_topics: ["object", "automated-decisions"]
+    difficulty: "hard"
+
+  - id: "SC-028"
+    title: "Breach across processor chain"
+    scenario: >
+      A sub-processor suffers a breach affecting several controllers' data but delays informing
+      the processor, jeopardising timely controller notifications to authorities.
+    expected_articles: ["Art. 28", "Art. 33"]
+    expected_topics: ["controller-processor", "notification-to-dpa"]
+    difficulty: "hard"
+
+  - id: "SC-029"
+    title: "Withdrawal of consent after sharing"
+    scenario: >
+      A user withdraws marketing consent; the controller had already shared the profile with ad
+      partners and refuses erasure of downstream copies.
+    expected_articles: ["Art. 7", "Art. 17"]
+    expected_topics: ["consent", "erasure"]
+    difficulty: "hard"
+
+  - id: "SC-030"
+    title: "BCRs versus SCCs for intra-group transfers"
+    scenario: >
+      A group relies on ad hoc oral arrangements for EU-to-third-country employee data transfers
+      instead of binding corporate rules or standard contractual clauses.
+    expected_articles: ["Art. 46", "Art. 47"]
+    expected_topics: ["transfers"]
+    difficulty: "hard"

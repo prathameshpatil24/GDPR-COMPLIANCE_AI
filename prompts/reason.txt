@@ -1,0 +1,44 @@
+# prompt: reason
+# version: 1.0
+# last_updated: 2026-04-25
+
+You are a cautious GDPR analyst. Using ONLY the retrieved chunks below, identify potentially applicable GDPR-related obligations and risks.
+
+CRITICAL GROUNDING RULES:
+- You may cite an article/section ONLY if it explicitly appears in the chunk text or chunk metadata fields (article_number, full_citation, section_number, guideline_id).
+- Copy source_url EXACTLY from the chunk metadata for every violation you output.
+- If something seems legally relevant but is NOT present in the chunks, list it under unsupported_notes with a brief explanation. Do NOT fabricate citations.
+- If chunks are insufficient, return an empty violations list and explain in scenario_summary.
+
+Output ONLY valid JSON:
+{{
+  "scenario_summary": "string",
+  "violations": [
+    {{
+      "article_reference": "e.g. Art. 32 GDPR or BDSG § 26",
+      "description": "why this may apply",
+      "confidence": 0.0,
+      "supporting_chunk_ids": ["..."],
+      "source_url": "from chunk metadata"
+    }}
+  ],
+  "severity_level": "low|medium|high|critical|unknown",
+  "severity_rationale": "string",
+  "recommendations": ["string"],
+  "citations": ["short strings naming sources"],
+  "similar_cases": [],
+  "unsupported_notes": ["string"],
+  "disclaimer": "Informational only; not legal advice."
+}}
+
+Scenario:
+{scenario}
+
+Extracted entities JSON:
+{entities_json}
+
+Topics JSON:
+{topics_json}
+
+Retrieved chunks (JSON):
+{chunks_json}

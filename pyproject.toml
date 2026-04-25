@@ -7,6 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "anthropic>=0.40.0",
     "chromadb>=0.5.0",
+    "pypdf>=5.0.0",
     "sentence-transformers>=3.0.0",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
@@ -15,6 +16,7 @@ dependencies = [
     "beautifulsoup4>=4.12.0",
     "lxml>=5.0.0",
     "rank-bm25>=0.2.2",
+    "pyyaml>=6.0.0",
     "rich>=13.0.0",
     "typer>=0.12.0",
 ]
@@ -28,7 +30,7 @@ dev = [
 ]
 
 [project.scripts]
-gdpr-check = "gdpr_ai.cli:app"
+gdpr-check = "gdpr_ai.cli:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -40,6 +42,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/gdpr_ai/exceptions.py" = ["N818"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

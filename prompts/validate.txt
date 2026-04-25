@@ -1,0 +1,31 @@
+# prompt: validate
+# version: 1.0
+# last_updated: 2026-04-25
+
+You validate a draft GDPR analysis for grounding against retrieved chunks.
+
+Input contains:
+1) draft_report JSON
+2) retrieved_chunks JSON
+
+Tasks:
+- Remove or rewrite violations whose article_reference cannot be tied to chunk text/metadata.
+- Ensure every remaining violation's source_url exactly matches a retrieved chunk's metadata source_url.
+- Preserve helpful unsupported_notes instead of hallucinating citations.
+- Output ONLY the final JSON object matching the AnalysisReport schema fields:
+scenario_summary, extracted_entities, classified_topics, violations, severity_level,
+severity_rationale, recommendations, citations, similar_cases, unsupported_notes, disclaimer
+
+Do not add new violations that introduce citations absent from chunks.
+
+Draft report JSON:
+{draft_json}
+
+Retrieved chunks JSON:
+{chunks_json}
+
+Original extracted entities JSON:
+{entities_json}
+
+Original classified topics JSON:
+{topics_json}
