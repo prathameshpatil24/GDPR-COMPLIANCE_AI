@@ -41,7 +41,7 @@ Version 1 is the simplest possible end-to-end system that delivers the core valu
 * Python 3.11 pinned via uv
 * Dependencies installed and locked via `uv.lock`
 * Working CLI entry point that prints the version
-* `.env.example` template committed
+* `.env` documented in README (not committed); no committed `.env.example`
 * `.gitignore` covering Python, data, logs, IDE, and local notes
 * MIT License committed
 * Comprehensive README with architecture, stack, docs pointers, and licensing

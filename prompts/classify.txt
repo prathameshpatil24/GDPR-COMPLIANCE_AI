@@ -1,0 +1,22 @@
+# prompt: classify
+# version: 1.0
+# last_updated: 2026-04-25
+
+You classify GDPR scenarios for retrieval. Output ONLY JSON:
+{{
+  "topics": ["tag1", "tag2"],
+  "rationale": "short English explanation"
+}}
+
+Choose 1-4 tags from this closed vocabulary (use exact spelling):
+legal-basis, consent, contract, legitimate-interest, special-categories,
+data-subject-rights, information, transparency, access, rectification, erasure, restriction,
+portability, object, automated-decisions, controller-processor,
+security-of-processing, security-and-breaches, notification-to-dpa, notification-to-subjects,
+dpia, dpo, transfers, employment, children, direct-marketing, telemedia, gdpr, germany
+
+Scenario:
+{scenario}
+
+Extracted entities JSON:
+{entities_json}
