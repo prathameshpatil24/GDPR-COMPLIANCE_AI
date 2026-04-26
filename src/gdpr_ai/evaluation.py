@@ -24,6 +24,28 @@ def load_gold_scenarios(path: Path) -> list[dict[str, Any]]:
     return [r for r in rows if isinstance(r, dict) and r.get("id")]
 
 
+def filter_unified_scenarios(
+    scenarios: list[dict[str, Any]],
+    *,
+    mode: str | None = None,
+    ids: list[str] | None = None,
+    difficulty: str | None = None,
+    category: str | None = None,
+) -> list[dict[str, Any]]:
+    """Filter unified gold rows by mode, ids, difficulty, or category."""
+    out = list(scenarios)
+    if mode:
+        out = [s for s in out if str(s.get("mode", "")) == mode]
+    if ids:
+        want = {str(i).strip() for i in ids if str(i).strip()}
+        out = [s for s in out if str(s.get("id", "")) in want]
+    if difficulty:
+        out = [s for s in out if str(s.get("difficulty", "")) == difficulty]
+    if category:
+        out = [s for s in out if str(s.get("category", "")) == category]
+    return out
+
+
 def normalize_article_ref(label: str) -> str:
     """Map citation strings to a coarse key (article number or section id)."""
     s = (label or "").strip()
