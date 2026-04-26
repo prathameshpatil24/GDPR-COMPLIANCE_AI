@@ -420,3 +420,35 @@ A small test ChromaDB with 20-50 hand-crafted chunks lives in `tests/fixtures/te
 Testing strategy combines fast, free, deterministic unit and integration tests (mocked LLM) with an authoritative gold-set evaluation (real LLM). The gold set is the project's primary quality artefact — it grows as the project matures and gates every prompt or retrieval change.
 
 Retrieval, validation, and translation quality each have independent test coverage. Adversarial scenarios probe weak points. Performance and cost regression gates are enforced alongside correctness gates.
+
+---
+
+## v2 Testing Strategy
+
+### v2 gold test set
+
+* **Size:** 20 compliance scenarios (separate file from v1 `gold_set.json`, for example `tests/gold_set_compliance.json`).
+* **Per scenario inputs:** structured or textual **system description** sufficient to build a **DataMap**.
+* **Expected outputs:** relevant **articles** and guidance references; expected **risk themes**; **document completeness** criteria (DPIA sections present, RoPA fields present, checklist items actionable).
+
+### System types to cover
+
+Include at least one scenario each aligned to: SaaS with user analytics; mobile app with location; e-commerce with payments; AI/ML product processing personal data; HR system; healthcare patient portal; IoT sensor data; marketing platform with profiling; children's educational app; cross-border transfer–heavy architecture.
+
+### Document generation tests
+
+For each scenario, automated or manual rubric checks:
+
+* **DPIA draft:** sections align with EDPB-oriented structure (headings present, risks and measures addressed).
+* **RoPA template:** Article 30–style fields populated from **DataMap**.
+* **Checklist:** items are **specific** (not generic platitudes) and cite sources where claiming legal obligation.
+
+### Integration tests
+
+* FastAPI route tests with **mocked** reasoning-engine responses (no live API in CI).
+* End-to-end compliance flow tests: intake → mapper (real test Chroma) → assessor (mocked LLM) → generator (deterministic template snapshot).
+
+### DataMap validation tests
+
+* Pydantic rejects invalid enums, missing required fields, and inconsistent cross-references (for example purpose referencing unknown category names).
+* Conversational intake fixtures: malformed text, contradictory claims, minimal descriptions — expect `insufficient-information` posture or validation errors, not silent invention.

@@ -1,12 +1,14 @@
 # Phase 3.18 – Frontend Design
 
-> **Status**: Deferred to v2. Version 1 of GDPR AI is CLI-only. This document outlines the planned web frontend for v2.
+> **Status**: Deferred to v3. Version 1 is CLI-only; version 2 adds a local REST API. This document outlines a planned web frontend that would consume that API in a later release.
 
 ## 1. Overview
 
 Version 1 uses the terminal as the user interface. Users enter scenarios via `gdpr-check` and receive Rich-formatted output. This is ideal for solo developer use but limits adoption by non-technical users.
 
 Version 2 introduces a web UI that exposes the same pipeline via a browser-based experience, targeting the broader user segments defined in [03 – Target Users](../phase-0-overview/03-target-users.md).
+
+**Documentation refresh:** The repository’s v2 scope is **CLI + local REST API** only; a browser UI is **deferred to v3** and is expected to call the API defined in [11 – API Design](../phase-2-architecture/11-api-design.md). Earlier wording in this file that ties the UI to “v2” describes the original sequencing; the **v2 / v3 Note** at the end is authoritative for current scope.
 
 ---
 
@@ -291,3 +293,9 @@ GitHub Actions workflow:
 The v2 frontend is designed as a thin, well-styled client over the same pipeline that powers the CLI. Next.js + Tailwind + shadcn/ui deliver a professional, fast-loading interface with minimal maintenance overhead. Authentication, history, and feedback are built in from the start.
 
 Implementation begins only after v1 ships and the pipeline is validated against the gold test set.
+
+---
+
+## v2 / v3 Note
+
+Frontend work remains **out of scope for v2**. v2 delivers **CLI commands** and a **local REST API** only. **v3** is expected to add a **Next.js** web UI that consumes the v2 API; the stack choices in this document remain indicative for that phase.

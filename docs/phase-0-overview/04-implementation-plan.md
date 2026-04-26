@@ -315,3 +315,19 @@ Version 1 is considered shipped when all of the following are true:
 ## 10. Summary
 
 The implementation plan is staged to maximise low-cost, credit-free progress early, concentrate paid language model usage in the value-delivering pipeline stages, and reach a shippable v1 within two to three weeks of part-time effort. Evaluation-first development, strict grounding, and small atomic commits provide the quality guardrails throughout.
+
+---
+
+## v2 Implementation Phases
+
+The following phases build on the completed v1 (Phases A–J). They add **compliance assessment**, **document generation**, **local REST API**, and **SQLite** persistence while **preserving** the v1 violation pipeline.
+
+| Phase | Name | Description | Depends On |
+|-------|------|-------------|------------|
+| K | Knowledge Base Expansion | Add DPIA templates, RoPA structure, TOM catalog, consent-flow best practices, legitimate-interest assessment guidance, and EU AI Act (data-protection-relevant) sources to ChromaDB | v1 complete |
+| L | System Intake Engine | Structured input parser: accepts system description (JSON schema), extracts data categories, processing purposes, legal-basis candidates, data flows, third parties, storage locations, retention; outputs a normalised **DataMap** | K |
+| M | Compliance Analysis Pipeline | New pipeline: **intake → map → assess → generate**. Takes **DataMap**, runs against expanded KB, flags applicable articles, compliant vs risky vs missing areas; reuses v1 retrieval with **compliance-posture** prompts | K, L |
+| N | Document Generation Service | From analysis output: DPIA draft (markdown), RoPA pre-filled template, technical checklist, consent-flow recommendations, retention policy draft — all markdown | M |
+| O | REST API Layer | FastAPI exposes **v1** (violation analysis) and **v2** (compliance assessment); endpoint detail in [11 – API Design](../phase-2-architecture/11-api-design.md) | M, N |
+| P | User and Project Persistence | SQLite: users (local identity), projects (multiple systems per user), analyses, generated documents | O |
+| Q | v2 Evaluation | Gold set: **20** compliance scenarios (SaaS, mobile, AI product, e-commerce, health, etc.); metrics: articles, DPIA completeness, actionability of technical guidance | M, N |

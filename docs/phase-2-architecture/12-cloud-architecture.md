@@ -297,3 +297,9 @@ This is managed as a project task in the v2 roadmap.
 The v2 cloud architecture is deliberately modest: one VPS in an EU data centre, Docker Compose, Cloudflare in front, embedded data stores. This keeps fixed monthly costs in single-digit euros while supporting a small beta and the ability to scale to hundreds of daily queries without re-architecting.
 
 More complex deployment topologies (multi-region, Kubernetes, managed services) are deferred until real usage justifies the additional operational overhead.
+
+---
+
+## v2 Note
+
+Remains deferred. v2 runs entirely locally. Cloud deployment is v3+ scope.

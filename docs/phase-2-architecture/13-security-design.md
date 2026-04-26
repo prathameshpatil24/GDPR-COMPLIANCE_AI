@@ -308,3 +308,14 @@ Users can inspect query logs at any time via SQLite or future dashboard. Every r
 GDPR AI's security posture is proportionate to its scope. Version 1 is a local CLI processing public legal knowledge and user-provided scenarios, with only the Anthropic API as an external dependency. Core protections — key management, input validation, hallucination guards, local-only storage — are in place from day one.
 
 Version 2 introduces hosting and user accounts, which expand the threat surface. The v2 security plan includes encryption at rest, rate limiting, automated dependency scanning, and compliance with GDPR for the hosted service itself.
+
+---
+
+## v2 Security Considerations (local API and persistence)
+
+* **SQLite file permissions** — the database file SHOULD be created with restrictive permissions (for example `chmod 600`) so other OS users on the same machine cannot read project or analysis content.
+* **Language-model API payload** — requests contain **system descriptions** and **retrieved legal text**, not production databases of data subjects; users SHOULD avoid pasting real individuals' data into descriptions.
+* **Generated documents** — stored **locally** only (SQLite and optional markdown export paths); no v2 requirement for remote object storage.
+* **Authentication** — v2 local deployment has **no** mandatory API authentication (single-user trust boundary). **Authentication and multi-tenant isolation** are v3+ scope when a hosted frontend exists.
+* **Prompt injection** — system descriptions and scenarios MUST be treated as **untrusted content**; system prompts and schema validation mitigate instruction hijacking; compliance outputs MUST remain citation-grounded where legal claims are made.
+* **Rate limiting** — API layer SHOULD enforce local rate limits to prevent accidental **runaway** reasoning-engine cost (tight client loops, buggy scripts).

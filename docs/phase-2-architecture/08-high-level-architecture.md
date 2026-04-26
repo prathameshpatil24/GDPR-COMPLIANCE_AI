@@ -354,3 +354,69 @@ Each extension is isolated to a single component, minimising ripple effects.
 The architecture is intentionally simple: one pipeline, four stages, one vector store, one LLM provider. This simplicity is the primary design virtue. Every choice is optimised for accuracy, cost, and developer understandability rather than feature breadth.
 
 The clean stage boundaries and explicit data contracts make every component independently testable and replaceable, setting up a straightforward path to v2 extensions.
+
+---
+
+## v2 Architecture Extension
+
+Version 2 adds **compliance assessment** alongside the existing **violation analysis** pipeline. Both modes share the **same ChromaDB knowledge base** (extended with v2 collections) and the **same language-model reasoning engine**; they differ in **intake shape**, **prompt objective**, and **output artefacts**.
+
+### v2 system diagram (local)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        GDPR AI v2                           │
+│                                                             │
+│  ┌──────────────┐    ┌──────────────────────────────────┐   │
+│  │   REST API   │    │           CLI (v1 + v2)          │   │
+│  │  (FastAPI)   │    │                                  │   │
+│  └──────┬───────┘    └──────────────┬───────────────────┘   │
+│         │                           │                       │
+│         ▼                           ▼                       │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              Router / Mode Selector                 │    │
+│  │         (violation_analysis | compliance_assessment)│    │
+│  └──────────┬──────────────────────┬───────────────────┘    │
+│             │                      │                        │
+│     ┌───────▼───────┐    ┌────────▼────────────┐           │
+│     │ v1 Pipeline   │    │   v2 Pipeline       │           │
+│     │ extract →     │    │   intake →          │           │
+│     │ classify →    │    │   map →             │           │
+│     │ retrieve →    │    │   assess →          │           │
+│     │ reason        │    │   generate          │           │
+│     └───────┬───────┘    └────────┬────────────┘           │
+│             │                      │                        │
+│             ▼                      ▼                        │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │           Shared Knowledge Base (ChromaDB)          │    │
+│  │  GDPR Articles | Recitals | BDSG | TTDSG | EDPB    │    │
+│  │  + v2: DPIA templates | RoPA | TOM | AI Act        │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │         Document Generation Service                 │    │
+│  │  DPIA Draft | RoPA Template | Checklist |           │    │
+│  │  Consent Flow | Retention Policy                    │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │         SQLite (User Projects & Documents)          │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │         LLM API (Reasoning Engine)                  │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Shared vs mode-specific behaviour
+
+| Aspect | Shared | v1-specific | v2-specific |
+|--------|--------|-------------|-------------|
+| Vector store | ChromaDB corpus + embeddings | Topic-tagged violation retrieval | Article mapping per DataMap elements |
+| Reasoning engine | Same client and grounding rules | Prompts: **what went wrong** | Prompts: **posture, gaps, remediation** |
+| Intake | — | Free-text scenario | JSON DataMap and/or conversational normalisation |
+| Outputs | Citations and disclaimers | Violation report | Compliance assessment + markdown documents |
+| Persistence | SQLite | Query/analytics logs (existing) | Projects, analyses, document bodies |
+
+This preserves v1 behaviour while adding a **second pipeline** behind an explicit **mode selector** in CLI and API.

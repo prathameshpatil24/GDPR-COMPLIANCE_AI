@@ -150,3 +150,25 @@ The resulting system delivers:
 * A reference architecture for retrieval-augmented generation beyond the legal domain
 
 The project is as much a demonstration of disciplined engineering as it is a useful tool.
+
+---
+
+## v2 Motivation Extension
+
+### From analytical to preventive
+
+* **v1** motivation is **analytical**: understand **what went wrong** in a described incident and which articles apply.
+* **v2** motivation is **preventive**: help teams **build compliant systems before they ship** — architecture, documentation, and operational controls aligned to GDPR (and GDPR-adjacent AI Act data aspects where relevant).
+
+### Detective mode vs architect mode
+
+* **Detective mode (v1)** — scenario in, violation report out.
+* **Architect mode (v2)** — system description in, **compliance blueprint** out (risk posture, DPIA draft, RoPA template, consent guidance, technical checklist, retention draft).
+
+### Cost of late compliance
+
+Retrofitting privacy and security after launch is routinely **several times more expensive** than baking it in during design — commonly cited ranges are **3–5×** higher for remediation vs early integration. v2 aligns the tool with that economic reality.
+
+### Privacy-by-design as a sales motion
+
+Enterprise buyers increasingly expect **vendor security and privacy questionnaires** and evidence of **privacy-by-design**. v2 outputs support teams who must answer those questions **from engineering reality**, not only from generic policy text.

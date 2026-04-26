@@ -268,3 +268,21 @@ If a key assumption is invalidated, the following actions apply:
 GDPR AI operates within a clear envelope: GDPR and German law, English runtime, single-shot CLI, local execution, non-commercial use, single developer, modest budget, short timeline. These constraints are deliberate choices that trade breadth for depth and feature richness for precision.
 
 The working assumptions are tractable — source stability, embedding quality, LLM reasoning — and all have defined response plans if invalidated. This leaves the project with a small, well-understood risk surface and a clear path to v1.
+
+---
+
+## v2 Constraints and Assumptions
+
+**Accuracy of intake** — v2 assumes the user supplies a **good-faith, accurate** system description. Incomplete or misleading inputs produce unreliable assessments (garbage in, garbage out).
+
+**Not legal advice** — v2 outputs are **guidance and drafts** only. Every generated document SHALL include a **disclaimer** that it is not legal advice and must be reviewed by qualified counsel where appropriate.
+
+**DPO and high-risk processing** — v2 does **not** replace a qualified DPO or legal counsel for **high-risk** processing or regulated sectors; it accelerates structured thinking only.
+
+**Regulatory scope** — v2 knowledge covers GDPR, BDSG, TTDSG, and EDPB-oriented materials in the knowledge base. It does **not** claim completeness for **sector-specific** regimes (for example dedicated health finance or telecom rules beyond what the indexed corpus contains).
+
+**EU AI Act scope** — Cross-references to the EU AI Act are **limited to GDPR-adjacent** personal-data and documentation obligations, not full conformity assessment for AI products.
+
+**Local processing and LLM calls** — All indexing, retrieval, SQLite storage, and document assembly run **locally**. Content sent to the language-model API is limited to **scenario or system-description text** and **retrieved legal excerpts** — not bulk personal data from a production database.
+
+**SQLite sufficiency** — SQLite is the persistence layer for v2 local use. Migration to PostgreSQL (or similar) is **deferred to v3** if multi-user hosted deployment requires it.

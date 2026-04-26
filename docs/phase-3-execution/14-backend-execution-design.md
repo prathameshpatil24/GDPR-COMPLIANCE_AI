@@ -351,3 +351,47 @@ v1 rebuilds the knowledge base manually. v2 may run scheduled rebuilds via cron 
 The backend is organised into small, single-responsibility modules with clear boundaries. The orchestrator coordinates the four stages with logging, cost tracking, and validation. Build-time scripts live outside the main package. Every public function is typed, documented, and tested.
 
 The structure is ready to accept the v2 FastAPI wrapper without internal changes.
+
+---
+
+## v2 Backend Modules
+
+New packages and directories extend the layout below. v1 modules remain as implemented; paths follow the repository conventions in `CLAUDE.md`.
+
+```
+src/gdpr_ai/
+├── pipeline/           # v1 — existing
+│   ├── extract.py
+│   ├── classify.py
+│   ├── retrieve.py
+│   └── reason.py
+├── compliance/         # v2 — NEW
+│   ├── intake.py       # System description parser → DataMap
+│   ├── mapper.py       # DataMap → GDPR article mapping
+│   ├── assessor.py     # Compliance posture assessment
+│   └── generator.py    # Document generation from assessment
+├── api/                # v2 — NEW
+│   ├── app.py          # FastAPI application
+│   ├── routes/
+│   │   ├── analyze.py  # /analyze/violation and /analyze/compliance
+│   │   ├── documents.py
+│   │   └── projects.py
+│   └── schemas.py      # Pydantic request/response models
+├── db/                 # v2 — NEW
+│   ├── database.py     # SQLite connection manager
+│   ├── models.py       # SQLAlchemy or raw SQL row models
+│   └── migrations.py   # Schema creation / upgrades
+├── templates/          # v2 — NEW
+│   ├── dpia.md.j2      # DPIA Jinja2 template
+│   ├── ropa.md.j2      # RoPA template
+│   ├── checklist.md.j2 # Technical checklist template
+│   ├── consent.md.j2   # Consent flow template
+│   └── retention.md.j2 # Data retention policy template
+├── knowledge/          # v1 — existing, extended for v2 sources
+│   ├── chunker.py
+│   ├── embedder.py
+│   └── store.py
+└── cli.py              # v1 — existing, extended with v2 commands
+```
+
+FastAPI handlers depend on the same `settings` and LLM client abstractions as the CLI; they MUST NOT embed retrieval or prompt strings directly in route functions beyond thin wiring.

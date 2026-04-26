@@ -291,3 +291,19 @@ Total and per-query costs must be visible at any time.
 GDPR AI's non-functional requirements prioritise accuracy, low cost, and grounded reasoning over feature breadth or scale. The targets are achievable on a single laptop with a modest Anthropic budget, making the system accessible to solo developers and small teams.
 
 Quality gates — precision, recall, zero hallucinations, cost ceilings, and latency targets — form the basis for regression testing in every phase and release.
+
+---
+
+## v2 Non-Functional Requirements
+
+**NFR-v2-01** — Compliance assessment (intake through assessment summary, excluding optional document generation) SHALL complete within **120 seconds** for a typical system description on a developer laptop.
+
+**NFR-v2-02** — Document generation SHALL complete within **60 seconds per document type** under typical load (local hardware, normal KB size).
+
+**NFR-v2-03** — API **simple** operations (health, fetch by id, list projects) SHALL respond in under **2 seconds** p95 locally.
+
+**NFR-v2-04** — The SQLite database SHALL handle up to **10,000 projects** without unacceptable degradation for single-user local use (interactive queries remain responsive).
+
+**NFR-v2-05** — All generated documents SHALL include **citations** to specific GDPR articles, recitals, or EDPB guidelines where a regulatory claim is made — no uncited legal claims in final outputs.
+
+**NFR-v2-06** — The system SHALL run **entirely locally** except for calls to the language-model API; no mandatory external SaaS for core operation (see constraints doc for LLM data flow).

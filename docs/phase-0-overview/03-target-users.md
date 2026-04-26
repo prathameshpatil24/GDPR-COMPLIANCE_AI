@@ -240,3 +240,37 @@ A web UI allows typing scenarios into a text area, receiving rendered reports, a
 GDPR AI serves a spectrum of users united by the need for fast, grounded, affordable GDPR violation analysis. The initial version is deliberately scoped for personal use, with the architecture designed to scale cleanly to broader segments as the tool matures.
 
 The common thread across all target segments is a preference for specialised, transparent, low-cost tooling over generic chatbots or expensive enterprise platforms.
+
+---
+
+## v2 Target Users
+
+v2 keeps all v1 segments but adds emphasis on **builders** and **repeat professional use**. The tiers below describe who benefits most from **compliance assessment** and **document generation**, not from violation analysis alone.
+
+### Tier 1 — Startup founders and indie developers
+
+Building a SaaS product or app, need GDPR-aligned artefacts **before launch**, often **no lawyer and no DPO**. Motivation: a **one-time or occasional** purchase of a **compliance blueprint** they can refine with counsel if needed.
+
+### Tier 2 — Freelance and agency developers
+
+Deliver **10–15 client projects per year**; each new system needs RoPA-style thinking, DPIA triggers, and third-party flow documentation. **Repeat users** — one blueprint per engagement, with comparability across projects.
+
+### Tier 3 — Small-company CTOs and tech leads (roughly 5–50 people)
+
+Shipping **new data collection**, **new integrations**, or **EU expansion**. Need to **reassess periodically** as the product and stack change.
+
+### Tier 4 — Compliance consultants and freelance DPOs
+
+Support **10–20 organisations**; use the tool to **accelerate** structured deliverables — for example a **first-cut DPIA** in minutes instead of many hours of blank-page work — always with professional review where stakes are high.
+
+### Why v2 is not “one-time use”
+
+Teams revisit compliance when:
+
+* **New features** introduce new categories of personal data
+* **New third-party processors** or **cross-border** flows appear
+* **EU AI Act** or product changes require **reassessment** of risk
+* **Investors or acquirers** request due-diligence packs
+* **Operational maturity** requires clearer **DSAR** and breach-playbook alignment
+
+v2 is designed for **iteration**: stored **projects**, **re-runs** on changed system descriptions, and **comparison** of assessments over time (see requirements and data model docs).

@@ -350,3 +350,16 @@ Incidents recorded in `docs/incidents/<date>.md` with timeline, root cause, acti
 Observability is treated as a first-class feature from v1 (local SQLite query log + cost tracking) and expanded in v2 to a full Prometheus + Grafana + Loki stack hosted alongside the service. Every query is traceable end-to-end. Cost is continuously tracked and enforced. Quality regressions are caught by the nightly evaluation run.
 
 This observability foundation is what enables confident iteration — every change can be measured, every regression caught, every cost surprise flagged early.
+
+---
+
+## v2 Monitoring Additions (local API and compliance mode)
+
+Even without hosted Prometheus, v2 SHOULD capture:
+
+* **Per analysis:** LLM cost (USD/EUR), token counts, wall-clock time, count of chunks retrieved, count of documents generated, mode (`violation_analysis` vs `compliance_assessment`).
+* **API request log:** optional SQLite table of `method`, `path`, `status`, `duration_ms`, `analysis_id`, error code — for debugging local FastAPI usage.
+* **Per-project cost:** cumulative reasoning-engine spend linked to `project_id` for budget awareness.
+* **Errors:** failed LLM calls (status + retry count), ChromaDB query failures, Jinja2 rendering exceptions — structured log lines at ERROR with correlation id.
+
+Hosted Grafana/Prometheus content in earlier sections remains **future** for actual deployment; v2 prioritises **local** observability parity with v1's query logging discipline.

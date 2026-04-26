@@ -405,3 +405,112 @@ For incremental updates (e.g., new GDPRhub cases):
 The data model is structured for both retrieval efficiency and traceability. Paragraph-level chunking preserves sub-clause precision. Rich metadata enables filtered retrieval. The fixed taxonomy constrains classification. Hybrid retrieval combines dense semantic similarity with sparse keyword matching. Translation of German sources happens once during indexing, keeping runtime costs minimal.
 
 Every chunk is traceable to its source, its license, and its legal identifier — supporting both accuracy and the licensing obligations defined in the project's constraint set.
+
+---
+
+## v2 Data Model Extension
+
+### New ChromaDB collections (v2)
+
+v1 may use a single logical collection or partitioned metadata; v2 **adds** dedicated collections (or metadata partitions) for compliance artefacts:
+
+| Collection key | Contents |
+|----------------|----------|
+| `dpia_guidance` | EDPB DPIA guidance, template structures, example assessment patterns |
+| `ropa_templates` | RoPA field definitions, example entries, Article 30 requirements |
+| `tom_catalog` | Technical and organisational measures catalog, mapped to GDPR articles |
+| `consent_guidance` | EDPB consent guidelines, legitimate-interest assessment framing |
+| `ai_act_crossref` | EU AI Act articles relevant to GDPR data-protection obligations |
+
+Indexing uses the same **bge-m3** embedding model as v1 for consistent retrieval.
+
+### SQLite schema (user projects and documents)
+
+```sql
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE projects (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    name TEXT NOT NULL,
+    system_description JSON NOT NULL,
+    data_map JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE analyses (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL REFERENCES projects(id),
+    mode TEXT NOT NULL CHECK(mode IN ('violation_analysis', 'compliance_assessment')),
+    input_text TEXT,
+    result JSON NOT NULL,
+    llm_cost_usd REAL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE documents (
+    id TEXT PRIMARY KEY,
+    analysis_id TEXT NOT NULL REFERENCES analyses(id),
+    doc_type TEXT NOT NULL CHECK(doc_type IN ('dpia', 'ropa', 'checklist', 'consent_flow', 'retention_policy', 'violation_report')),
+    content TEXT NOT NULL,
+    format TEXT NOT NULL DEFAULT 'markdown',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### DataMap schema (Pydantic)
+
+```python
+class DataCategory(BaseModel):
+    name: str                        # e.g., "email addresses", "IP addresses"
+    sensitivity: str                 # "standard" | "special_category" | "criminal"
+    volume: str                      # "low" | "medium" | "high"
+    subjects: list[str]              # e.g., ["customers", "employees"]
+
+
+class ProcessingPurpose(BaseModel):
+    purpose: str                     # e.g., "marketing emails", "analytics"
+    legal_basis_claimed: str | None  # e.g., "consent", "legitimate_interest"
+    data_categories: list[str]       # references to DataCategory names
+
+
+class DataFlow(BaseModel):
+    source: str                      # e.g., "web form", "API", "third-party"
+    destination: str                 # e.g., "PostgreSQL", "analytics provider"
+    data_categories: list[str]
+    crosses_border: bool
+    destination_country: str | None
+
+
+class ThirdParty(BaseModel):
+    name: str
+    role: str                        # "processor" | "joint_controller" | "independent_controller"
+    purpose: str
+    dpa_in_place: bool | None        # Data Processing Agreement
+    country: str | None
+
+
+class StorageInfo(BaseModel):
+    location: str                    # e.g., "AWS eu-central-1", "local server"
+    country: str
+    encryption_at_rest: bool | None
+    encryption_in_transit: bool | None
+    retention_period: str | None     # e.g., "30 days", "2 years", "indefinite"
+
+
+class DataMap(BaseModel):
+    system_name: str
+    system_description: str
+    data_categories: list[DataCategory]
+    processing_purposes: list[ProcessingPurpose]
+    data_flows: list[DataFlow]
+    third_parties: list[ThirdParty]
+    storage: list[StorageInfo]
+    has_automated_decision_making: bool
+    processes_children_data: bool
+    uses_ai_ml: bool
+```

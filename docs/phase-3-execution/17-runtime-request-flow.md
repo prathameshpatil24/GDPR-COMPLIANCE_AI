@@ -387,3 +387,31 @@ V2 may introduce:
 The runtime flow is sequential, well-instrumented, and bounded in latency and cost. Every stage has defined inputs, outputs, failure modes, and observability. The p50 latency fits comfortably under the 5-second target, with the p95 occasionally exceeding it under API slowdowns.
 
 The observability contract — one SQLite row per query with full context — is sufficient for both debugging and long-term quality analysis.
+
+---
+
+## v2 Request Flow
+
+### Compliance assessment (CLI or API)
+
+High-level sequence:
+
+```
+User → CLI/API: submit system description
+  → intake: parse into DataMap
+    → mapper: query ChromaDB for relevant articles per data category / purpose / flow
+      → assessor: send DataMap + retrieved chunks to reasoning engine
+        → reasoning engine returns ComplianceAssessment (findings, risks, recommendations)
+      → generator: render DPIA, RoPA, checklist, consent, retention templates
+        → Jinja2 combines template structure with assessment fields
+      → db: store analysis + generated documents in SQLite
+    → CLI/API: return assessment summary + document ids (and paths if exported)
+```
+
+### Latency expectations
+
+Compliance assessment typically involves **more retrieval fan-out** and **multiple document generations** than a single v1 violation report. NFR-v2 targets in [06 – Non-Functional Requirements](../phase-1-requirements/06-non-functional-requirements.md) bound acceptable duration; long jobs SHOULD use **async** acceptance on the API (see [11 – API Design](../phase-2-architecture/11-api-design.md)).
+
+### Observability
+
+v2 SHOULD log **per analysis**: mode, project id, chunk counts retrieved per stage, document types generated, cumulative token usage, and wall-clock time per stage — either extended columns on existing logs or a dedicated `analyses` / API request table linked to SQLite project storage.

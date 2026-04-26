@@ -346,3 +346,9 @@ One gold-set run: approximately 0.50 EUR. Daily: 15 EUR/month. Acceptable for a 
 The v2 CI/CD pipeline uses GitHub Actions for PR validation and main-branch deployment. Fast, free, and simple. Dependency caching keeps PR feedback under 3 minutes. Gitleaks prevents secrets from sneaking in. Deployment is a straightforward SSH-based Docker Compose update to a single Hetzner VPS.
 
 More sophisticated delivery patterns (blue-green, canary, multi-region) are deferred until the project's scale justifies the complexity.
+
+---
+
+## v2 Note
+
+Remains deferred. Local development relies on **manual** test runs (`pytest`, evaluation harness). Full **CI/CD** automation is **v3+** scope, alongside any hosted deployment.

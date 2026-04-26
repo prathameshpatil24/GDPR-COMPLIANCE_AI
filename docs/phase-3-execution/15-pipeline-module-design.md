@@ -437,3 +437,35 @@ These are constants in v1; tunable via config file in v2.
 Each pipeline module has a single responsibility, a clear input-output contract, well-defined failure modes, and isolated testing. The orchestrator composes them into the end-to-end flow with logging and cost tracking. Prompts are file-based and version-controlled. The LLM client encapsulates retry logic and cost accounting so higher-level modules stay clean.
 
 This design supports iteration: changing a prompt, tuning retrieval weights, or swapping a model can be done in one place without cascading changes.
+
+---
+
+## v2 Compliance Pipeline
+
+The v2 path is **intake → map → assess → generate**. It reuses **retrieval** and **grounding** machinery from v1 with different prompts and output schemas. Each module below is independently testable.
+
+### `compliance.intake`
+
+* **Input:** Structured JSON conforming to **DataMap**, or **free-text** system description.
+* **Behaviour:** If JSON, validate with Pydantic. If free text, call the reasoning engine with a structured-extraction prompt to populate **DataMap** fields (with explicit unknowns rather than invention).
+* **Output:** `DataMap` instance persisted on the project row when applicable.
+
+### `compliance.mapper`
+
+* **Input:** `DataMap`.
+* **Behaviour:** For each data category, processing purpose, flow, and third party, query ChromaDB (including v2 collections) for applicable GDPR articles, BDSG sections, and EDPB guidelines.
+* **Output:** **ArticleMap** — mapping from system elements to cited legal bases and chunk ids (implementation detail: Pydantic model shared with assessor).
+
+### `compliance.assessor`
+
+* **Input:** `DataMap` + **ArticleMap** + retrieved chunk texts (same grounding contract as v1: no citation without retrieval path).
+* **Behaviour:** Single or multi-call reasoning with a **compliance posture** prompt: "what is missing, what is risky, what is needed?" — not "what went wrong in an incident?"
+* **Output:** **ComplianceAssessment** — findings with posture `compliant` | `at-risk` | `non-compliant` | `insufficient-information`, remediation text, technical steps, citations.
+
+### `compliance.generator`
+
+* **Input:** **ComplianceAssessment** (+ **DataMap** for RoPA context).
+* **Behaviour:** Render Jinja2 templates (`templates/*.md.j2`) per document type. Templates encode regulatory **structure** (EDPB-oriented DPIA sections, Article 30 RoPA fields); the reasoning engine fills **case-specific** narrative fields where needed, still subject to citation rules.
+* **Output:** Markdown strings stored in SQLite `documents` and returned via API/CLI.
+
+Prompt files for v2 live alongside v1 under `src/gdpr_ai/prompts/` (for example `compliance_extract.txt`, `compliance_assess.txt`) and are versioned in Git the same way as v1 prompts.

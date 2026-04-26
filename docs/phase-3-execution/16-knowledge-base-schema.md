@@ -434,3 +434,27 @@ For v1, the SQLite schema is created on first run. For v2, an Alembic-style migr
 The knowledge base schema is designed for traceability (every chunk knows its source, URL, and license), retrieval efficiency (flat metadata for ChromaDB filtering, parallel BM25 index), and cost observability (SQLite query log with per-stage metrics).
 
 All schemas are Pydantic models with strict validation, ensuring that malformed data is caught at ingestion rather than at query time.
+
+---
+
+## v2 Knowledge Base Expansion
+
+### New sources to scrape, translate where needed, chunk, and embed
+
+* EDPB **DPIA** guidance (Guidelines on Data Protection Impact Assessment, WP 248 rev.01 and successors)
+* EDPB **consent** guidelines (05/2020 and related)
+* EDPB **legitimate interests** assessment materials
+* **Article 30** RoPA requirements and supervisory authority exemplars
+* **BSI IT-Grundschutz** (or equivalent) **TOM** catalogues mapped to GDPR security and organisational articles — English summaries where primary materials are German
+* **EU AI Act** — articles most relevant to **personal data** processing alignment (for example Arts. 10, 13, 14, 26, 27 — exact set frozen at implementation time)
+* Sample **DPIA** publications from supervisory authorities (BfDI, CNIL, ICO) where licence permits indexing and attribution
+
+### Collection layout
+
+* **v1 chunks remain** in the existing corpus; v2 adds **additional ChromaDB collections** (or the same collection with a discriminating `collection` / `source_family` metadata field — implementation choice documented at build time).
+* **Shared embedding model:** `BAAI/bge-m3` (same as v1) for cross-retrieval between legal text and guidance.
+* **Attribution:** every new chunk carries `source`, `url`, `license` consistent with [10 – Data and Knowledge Model](../phase-2-architecture/10-data-knowledge-model.md).
+
+### Chunk metadata extensions (implementation)
+
+Extend `SourceType` / topic tags as needed for `dpia_guidance`, `ropa_templates`, `tom_catalog`, `consent_guidance`, `ai_act_crossref` without breaking existing v1 filters (additive enum values and tags only).

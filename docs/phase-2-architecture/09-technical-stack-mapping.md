@@ -411,3 +411,17 @@ For v2 retrieval quality improvement.
 The v1 stack is deliberately narrow: Python, Anthropic, ChromaDB, local embeddings, SQLite, a CLI, and strong dev tooling. Every component is chosen for either operational simplicity or best-in-class quality in its specific role. Costs are minimised by using local inference where possible and paying only for LLM reasoning calls.
 
 The architecture is ready to absorb v2 extensions (FastAPI, web UI, re-ranking, hosting) without rearchitecting the core pipeline.
+
+---
+
+## v2 Stack Additions
+
+| Component | v1 | v2 Addition |
+|-----------|-----|-------------|
+| Document generation | None (reports via pipeline only) | **Jinja2** templates rendering to **markdown** (DPIA, RoPA, checklist, consent, retention) |
+| Persistence | Stateless runs + query log SQLite | **SQLite** via **aiosqlite** (or equivalent async driver) for projects, analyses, documents |
+| API framework | FastAPI present in stack; HTTP deferred | **FastAPI** application exposing **v1** and **v2** routes on **localhost** |
+| Input validation | Scenario string + length checks | **Pydantic v2** models for **system description** and **DataMap** |
+| Template engine | None | **Jinja2** for regulatory-structure templates combined with assessment variables |
+
+v2 does **not** introduce a new vector database: ChromaDB and **bge-m3** remain the embedding and retrieval stack; v2 adds **collections** and ingestion scripts for new source types (see data model and knowledge-base docs).

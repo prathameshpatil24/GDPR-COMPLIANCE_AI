@@ -261,3 +261,59 @@ Some functional requirements rely on non-functional guarantees. These are listed
 GDPR AI's functional requirements cover input handling, pipeline processing, structured output, knowledge base completeness, evaluation, observability, and CLI interaction. Every requirement has a verifiable acceptance criterion and a clear owner in the system architecture.
 
 The requirements are intentionally scoped for v1 simplicity — single-shot scenario analysis with a CLI interface — with explicit deferral of multi-turn conversation, document upload, and website scanning to later versions.
+
+---
+
+## v2 Functional Requirements
+
+The following requirements extend v1. They cover **system intake**, **compliance analysis**, **document generation**, **REST API**, and **persistence** for compliance assessment mode.
+
+### System Intake
+
+**FR-v2-01** — The system SHALL accept a structured system description via a documented JSON schema (Pydantic models), validated at the API and CLI boundaries.
+
+**FR-v2-02** — The system SHALL extract and normalise, from that description: data categories collected; processing purposes; legal-basis candidates; data flows (who sends what where); third-party processors; storage locations and jurisdictions; retention periods.
+
+**FR-v2-03** — The system SHALL produce a standardised **DataMap** object from intake (see [10 – Data and Knowledge Model](../phase-2-architecture/10-data-knowledge-model.md)).
+
+**FR-v2-04** — The system SHALL support both **structured** (JSON) and **conversational** (free-text) intake; free-text SHALL be normalised into the same DataMap schema (via the reasoning engine where needed).
+
+### Compliance Analysis
+
+**FR-v2-05** — The system SHALL identify which GDPR articles, BDSG sections, and EDPB guidelines are relevant to the described system.
+
+**FR-v2-06** — The system SHALL classify each assessed aspect of the system as one of: **compliant**, **at-risk**, **non-compliant**, or **insufficient-information**.
+
+**FR-v2-07** — The system SHALL provide specific remediation guidance for each at-risk or non-compliant finding, including technical implementation steps where applicable.
+
+**FR-v2-08** — When the system description involves AI/ML processing of personal data, the system SHALL cross-reference EU AI Act requirements relevant to data protection (GDPR-adjacent scope only; not full AI Act product compliance).
+
+### Document Generation
+
+**FR-v2-09** — The system SHALL generate a draft DPIA document following EDPB-oriented structure (template + grounded content).
+
+**FR-v2-10** — The system SHALL generate a pre-filled RoPA template derived from the DataMap.
+
+**FR-v2-11** — The system SHALL generate a technical requirements checklist (encryption, access controls, breach notification, DSAR handling, and related controls).
+
+**FR-v2-12** — The system SHALL generate consent-flow recommendations specifying what needs explicit consent versus legitimate interest (and gaps where basis is unclear).
+
+**FR-v2-13** — The system SHALL generate a data retention policy draft with proposed retention periods per data category.
+
+**FR-v2-14** — All generated documents SHALL be persisted and exposed as **markdown** outputs (files and/or API body fields).
+
+### API
+
+**FR-v2-15** — The system SHALL expose REST API endpoints for both **violation analysis** (v1 mode) and **compliance assessment** (v2 mode), in addition to the CLI.
+
+**FR-v2-16** — The API SHALL support **asynchronous** processing for long-running compliance assessments (accept job, poll or fetch by id).
+
+**FR-v2-17** — The API SHALL return structured JSON responses whose findings and generated text include **citations** to specific GDPR articles (and related sources), consistent with grounding rules.
+
+### Persistence
+
+**FR-v2-18** — The system SHALL store user projects and generated documents in **SQLite**.
+
+**FR-v2-19** — The system SHALL support **multiple projects** per user (local user identity).
+
+**FR-v2-20** — The system SHALL allow re-running analysis on a **modified** system description and **comparing** results to a prior run for the same project (at minimum: retrieve prior analysis records side-by-side).

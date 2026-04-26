@@ -156,3 +156,22 @@ GDPR AI exists to demonstrate how such a system can be:
 * German-market aware
 * Transparent and extensible
 * Built with low operational cost
+
+---
+
+## v2 Problem Extension
+
+### v1 vs v2 question
+
+* **v1** answers: *Which GDPR articles were violated in this scenario?*
+* **v2** answers: *I am building a system that does X — what do I need to do to be GDPR compliant?*
+
+### Market gap
+
+Enterprise compliance platforms (for example OneTrust, Vanta, Sprinto) typically cost on the order of **USD 10k–100k+ per year** and are built for compliance teams, audit workflows, and vendor programmes. There is little that is **affordable and structured** for **indie developers**, **startup founders**, or **small agencies** who must go from near-zero GDPR literacy to a **defensible posture** without a full-time DPO or enterprise contract.
+
+Industry experience suggests organisations spend roughly **USD 25k+ per year** on compliance tooling and advisory for smaller setups, and **USD 2M+ per year** at enterprise scale, depending on sector and footprint. A three-person startup often handles privacy **after hours** with search engines and blog posts. v2 targets that gap: **preventive**, **document-producing** guidance grounded in the same corpus as v1, running **locally**.
+
+### EU AI Act and stacked risk
+
+The **EU AI Act** applies from **August 2026**. Where personal data processing intersects regulated AI practices, a single technical or governance failure can create **overlapping exposure** under GDPR and the AI Act. That makes **up-front compliance assessment** — not only post-incident violation analysis — more urgent for teams shipping data-driven and ML-heavy products.
