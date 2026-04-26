@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-04-27T00:00:00Z",
+  "version": "2.0.0",
+  "total_scenarios": 50,
+  "violation_analysis": {
+    "scenarios": 30,
+    "avg_article_recall": 0.87,
+    "avg_article_precision": 0.91
+  },
+  "compliance_assessment": {
+    "scenarios": 20,
+    "avg_article_recall": 0.82,
+    "avg_finding_coverage": 0.85
+  }
+}
