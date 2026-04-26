@@ -6,10 +6,12 @@ import json
 from pathlib import Path
 
 import typer
+from pydantic import ValidationError
 from rich.console import Console
 from rich.table import Table
 
 from gdpr_ai import __version__
+from gdpr_ai.compliance import run_compliance_assessment
 from gdpr_ai.exceptions import GDPRAIError
 from gdpr_ai.logger import get_query, get_stats, list_recent_queries, set_feedback
 from gdpr_ai.models import AnalysisReport
@@ -96,6 +98,78 @@ def analyze(
         console.print_json(data=report.model_dump())
     else:
         _render_report(report)
+
+
+@app.command("assess")
+def assess(
+    description: str | None = typer.Argument(None, help="Free-text system description."),
+    file: Path | None = typer.Option(
+        None,
+        "--file",
+        "-f",
+        help="JSON file matching the DataMap schema.",
+    ),
+    as_json: bool = typer.Option(False, "--json", help="Emit raw JSON only."),
+) -> None:
+    """Run compliance assessment (v2) on a system description or structured JSON."""
+    if file:
+        raw = json.loads(file.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise typer.BadParameter("JSON root must be an object.")
+    elif description:
+        text = description.strip()
+        if len(text) < 20:
+            raise typer.BadParameter("Description is too short (min 20 characters).")
+        if len(text) > 32000:
+            raise typer.BadParameter("Description is too long (max 32000 characters).")
+        raw = text
+    else:
+        raise typer.BadParameter("Provide description text or --file.")
+
+    try:
+        assessment = asyncio.run(run_compliance_assessment(raw))
+    except (GDPRAIError, ValidationError) as exc:
+        console.print(f"[red]Error:[/red] {exc}")
+        raise typer.Exit(code=2) from exc
+
+    if as_json:
+        console.print_json(data=assessment.model_dump())
+        return
+
+    console.print(f"[bold]System[/bold] {assessment.system_name}\n")
+    console.print(f"[bold]Overall risk[/bold] {assessment.overall_risk_level}\n")
+    console.print(f"{assessment.summary}\n")
+    if assessment.findings:
+        table = Table("Area", "Status", "Articles", "Detail")
+        for f in assessment.findings:
+            arts = ", ".join(f.relevant_articles)
+            table.add_row(
+                f.area,
+                f.status.value,
+                arts[:120] + ("…" if len(arts) > 120 else ""),
+                f.description[:200] + ("…" if len(f.description) > 200 else ""),
+            )
+        console.print(table)
+    console.print(
+        "\n[dim]This output is not legal advice. "
+        "Review findings with a qualified professional.[/dim]"
+    )
+
+
+@app.command("serve")
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", help="Bind address."),
+    port: int = typer.Option(8000, "--port", help="TCP port."),
+) -> None:
+    """Start the local HTTP API (FastAPI + uvicorn)."""
+    import uvicorn
+
+    uvicorn.run(
+        "gdpr_ai.api.app:app",
+        host=host,
+        port=port,
+        log_level="info",
+    )
 
 
 @app.command("stats")

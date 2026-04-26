@@ -22,7 +22,11 @@ logger = logging.getLogger(__name__)
 def _retrieved_articles_summary(chunks: list[RetrievedChunk]) -> str:
     """Comma-separated unique citation labels from chunk metadata (for logs)."""
     refs = sorted(
-        {str(c.metadata.get("article_number", "")).strip() for c in chunks if c.metadata.get("article_number")}
+        {
+            str(c.metadata.get("article_number", "")).strip()
+            for c in chunks
+            if c.metadata.get("article_number")
+        }
     )
     return ",".join(refs)
 
@@ -209,8 +213,8 @@ async def validate_report_llm(
     return report, res
 
 
-async def run_pipeline(scenario_text: str) -> AnalysisReport:
-    """Execute all stages with retries and logging."""
+async def run_pipeline_logged(scenario_text: str) -> tuple[AnalysisReport, str]:
+    """Execute all stages with retries and logging; returns the query log id."""
     t_run = time.perf_counter()
     query_id = str(uuid.uuid4())
     total_in = total_out = 0
@@ -287,4 +291,10 @@ async def run_pipeline(scenario_text: str) -> AnalysisReport:
         query_id=query_id,
         analysis_mode="violation_analysis",
     )
+    return report, query_id
+
+
+async def run_pipeline(scenario_text: str) -> AnalysisReport:
+    """Execute all stages with retries and logging."""
+    report, _ = await run_pipeline_logged(scenario_text)
     return report

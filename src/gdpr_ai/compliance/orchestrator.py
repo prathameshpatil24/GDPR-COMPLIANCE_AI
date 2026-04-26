@@ -26,8 +26,10 @@ def _chunks_summary(chunks: list[RetrievedChunk]) -> str:
     return ",".join(sorted(labels))[:4000]
 
 
-async def run_compliance_assessment(input_data: dict[str, Any] | str) -> ComplianceAssessment:
-    """Run v2 compliance pipeline and log the result."""
+async def run_compliance_assessment_logged(
+    input_data: dict[str, Any] | str,
+) -> tuple[ComplianceAssessment, str]:
+    """Run v2 compliance pipeline and log the result; returns the query log id."""
     t_run = time.perf_counter()
     query_id = str(uuid.uuid4())
     total_in = total_out = 0
@@ -100,4 +102,10 @@ async def run_compliance_assessment(input_data: dict[str, Any] | str) -> Complia
         query_id=query_id,
         analysis_mode="compliance_assessment",
     )
+    return assessment, query_id
+
+
+async def run_compliance_assessment(input_data: dict[str, Any] | str) -> ComplianceAssessment:
+    """Run v2 compliance pipeline and log the result."""
+    assessment, _ = await run_compliance_assessment_logged(input_data)
     return assessment
