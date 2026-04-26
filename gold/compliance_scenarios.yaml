@@ -1,0 +1,396 @@
+# Gold scenarios for compliance assessment mode (v2). Freetext system descriptions.
+scenarios:
+  - id: SC-C-001
+    title: SaaS email marketing platform
+    difficulty: medium
+    system_description: >
+      B2B SaaS sends promotional emails to EU subscribers collected via web signup.
+      We store email, name, and engagement metrics in PostgreSQL in Frankfurt.
+      Consent checkboxes are bundled with terms of service. Unsubscribe link is in the footer.
+      We use a US-based delivery vendor as processor under a DPA.
+    expected_findings:
+      - consent
+      - data_minimization
+      - transfers
+    expected_articles:
+      - "Art. 6 GDPR"
+      - "Art. 7 GDPR"
+      - "Art. 21 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - consent_flow
+      - retention_policy
+
+  - id: SC-C-002
+    title: Mobile app with location tracking
+    difficulty: hard
+    system_description: >
+      Fitness app for EU users collects precise GPS location every 5 minutes when the app is open,
+      plus heart rate from wearables. Data is processed for workout maps and sold in aggregated
+      form to an ad partner. Backend is multi-region with backups in the US.
+    expected_findings:
+      - consent
+      - dpia
+      - transfers
+      - data_minimization
+    expected_articles:
+      - "Art. 9 GDPR"
+      - "Art. 35 GDPR"
+      - "Art. 44 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - consent_flow
+      - retention_policy
+
+  - id: SC-C-003
+    title: E-commerce with payment processing
+    difficulty: medium
+    system_description: >
+      Online shop stores customer accounts with addresses and order history. Payments go through
+      a PSP; we tokenize cards only. Logs with IP and user agent retained 18 months on NVMe in the EU.
+      Incident response runbook exists but breach notification to DPA is not documented.
+    expected_findings:
+      - security
+      - breach
+      - processor
+    expected_articles:
+      - "Art. 28 GDPR"
+      - "Art. 32 GDPR"
+      - "Art. 33 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-004
+    title: AI chatbot for customer queries
+    difficulty: hard
+    system_description: >
+      Public website chatbot answers product questions using an LLM. Conversations may include
+      order numbers and email addresses typed by users. Logs are used to fine-tune the model weekly.
+      No human review for automated replies about refunds above 500 EUR.
+    expected_findings:
+      - automated
+      - transparency
+      - ai
+    expected_articles:
+      - "Art. 22 GDPR"
+      - "Art. 13 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - consent_flow
+
+  - id: SC-C-005
+    title: HR system for EU employees
+    difficulty: hard
+    system_description: >
+      Cloud HRIS holds personnel files, payroll, performance reviews, and optional self-reported
+      health accommodations. Data stored in Ireland. Line managers can export CSVs to local laptops
+      without DLP. Retention after termination not defined.
+    expected_findings:
+      - employment
+      - special_category
+      - retention
+    expected_articles:
+      - "Art. 9 GDPR"
+      - "Art. 5 GDPR"
+      - "Art. 32 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-006
+    title: Healthcare patient portal
+    difficulty: hard
+    system_description: >
+      Hospital patient portal shows lab results and messages to clinicians. Authentication is
+      password-only; MFA not enforced. Audit logs for access are kept 30 days. Data hosted with
+      a US cloud provider under SCCs.
+    expected_findings:
+      - security
+      - special_category
+      - transfers
+    expected_articles:
+      - "Art. 9 GDPR"
+      - "Art. 32 GDPR"
+      - "Art. 15 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-007
+    title: IoT smart home device
+    difficulty: medium
+    system_description: >
+      Smart speaker records voice commands processed in the cloud for intent recognition.
+      Device marketed to families; parental controls are optional. Firmware updates over cleartext
+      HTTP in legacy models. Telemetry shared with analytics vendor in Singapore.
+    expected_findings:
+      - children
+      - security
+      - transfers
+    expected_articles:
+      - "Art. 8 GDPR"
+      - "Art. 32 GDPR"
+      - "Art. 44 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - consent_flow
+
+  - id: SC-C-008
+    title: Analytics platform with profiling
+    difficulty: hard
+    system_description: >
+      Product analytics builds cross-session profiles from cookies and device IDs for ad
+      personalization. Legitimate interest claimed for all processing; no consent banner in the EU
+      property. Profiles sold to data brokers under separate agreement.
+    expected_findings:
+      - consent
+      - legitimate
+      - transparency
+    expected_articles:
+      - "Art. 6 GDPR"
+      - "Art. 21 GDPR"
+      - "Art. 22 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - consent_flow
+
+  - id: SC-C-009
+    title: Children's educational app
+    difficulty: medium
+    system_description: >
+      Learning app for ages 8–12 collects parent email, child nickname, and lesson progress.
+      Push notifications for marketing partners. COPA-style age gate is a self-declaration checkbox.
+    expected_findings:
+      - children
+      - consent
+    expected_articles:
+      - "Art. 8 GDPR"
+      - "Art. 5 GDPR"
+    expected_documents:
+      - dpia
+      - checklist
+      - consent_flow
+
+  - id: SC-C-010
+    title: Cross-border SaaS with US transfer
+    difficulty: medium
+    system_description: >
+      EU customer CRM data replicated to US region for support engineers. Standard contractual
+      clauses signed in 2021; no transfer impact assessment on file. Subprocessors not listed
+      in the privacy notice.
+    expected_findings:
+      - transfers
+      - transparency
+    expected_articles:
+      - "Art. 44 GDPR"
+      - "Art. 46 GDPR"
+      - "Art. 13 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-011
+    title: Recruitment platform with AI screening
+    difficulty: hard
+    system_description: >
+      ATS scores CVs with proprietary ML; candidates not informed of automated ranking.
+      Video interview optional; emotional analysis flags enabled for sales roles. Data retained
+      indefinitely for talent pool.
+    expected_findings:
+      - automated
+      - transparency
+      - retention
+    expected_articles:
+      - "Art. 22 GDPR"
+      - "Art. 13 GDPR"
+      - "Art. 5 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+
+  - id: SC-C-012
+    title: Social media analytics dashboard
+    difficulty: medium
+    system_description: >
+      Tool ingests public social posts and user handles to measure campaign reach. Some data
+      scraped from closed groups using borrowed credentials. DSAR process not defined.
+    expected_findings:
+      - legitimate
+      - data_subject_rights
+    expected_articles:
+      - "Art. 6 GDPR"
+      - "Art. 15 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+
+  - id: SC-C-013
+    title: Cloud backup service
+    difficulty: easy
+    system_description: >
+      Consumer backup encrypts files client-side; we store blobs in EU datacenters. Keys held only
+      on user devices. Subprocessors listed in terms. No formal retention: deleted when user
+      cancels, except billing records 7 years.
+    expected_findings:
+      - processor
+      - security
+    expected_articles:
+      - "Art. 28 GDPR"
+      - "Art. 32 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-014
+    title: Customer support ticketing
+    difficulty: easy
+    system_description: >
+      Zendesk holds tickets with email, free-text issues, and attachments. EU instance.
+      Tickets auto-deleted after 2 years. Access roles for agents; no SIEM integration.
+    expected_findings:
+      - retention
+      - processor
+    expected_articles:
+      - "Art. 15 GDPR"
+      - "Art. 17 GDPR"
+      - "Art. 28 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-015
+    title: Loyalty and rewards program
+    difficulty: medium
+    system_description: >
+      Retail loyalty links purchases to phone number and shares segments with partner brands for
+      co-marketing. Single opt-in at checkout. Partners process data in multiple non-adequate
+      countries under verbal agreements.
+    expected_findings:
+      - consent
+      - purpose_limitation
+      - transfers
+    expected_articles:
+      - "Art. 6 GDPR"
+      - "Art. 5 GDPR"
+      - "Art. 44 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - consent_flow
+
+  - id: SC-C-016
+    title: Video surveillance
+    difficulty: medium
+    system_description: >
+      Office CCTV with 90-day retention; signs at entrance mention security. Footage accessible to
+      all facility staff via shared SMB share. No DPIA documented for new biometric exit gates pilot.
+    expected_findings:
+      - dpia
+      - security
+      - legitimate
+    expected_articles:
+      - "Art. 5 GDPR"
+      - "Art. 32 GDPR"
+      - "Art. 35 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+
+  - id: SC-C-017
+    title: Employee monitoring software
+    difficulty: hard
+    system_description: >
+      Endpoint agent logs keystrokes, screenshots every 5 minutes, and browser history for remote
+      workers globally. Germany-based employer; works council not consulted. Data stored 1 year.
+    expected_findings:
+      - dpia
+      - proportionality
+      - employment
+    expected_articles:
+      - "Art. 5 GDPR"
+      - "Art. 88 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+
+  - id: SC-C-018
+    title: Fintech lending platform
+    difficulty: hard
+    system_description: >
+      Automated credit decisions using bank transaction categories and open banking data.
+      Applicants receive generic decline messages. Special category inference from merchant
+      codes possible. Model cards not shared internally.
+    expected_findings:
+      - automated
+      - special_category
+      - transparency
+    expected_articles:
+      - "Art. 22 GDPR"
+      - "Art. 9 GDPR"
+      - "Art. 13 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - consent_flow
+
+  - id: SC-C-019
+    title: Research platform with anonymized data
+    difficulty: hard
+    system_description: >
+      Research cohort built from clinic exports; identifiers stripped with k-anonymity k=5.
+      Re-identification risk assessment outdated. Data shared with universities under data use
+      agreements. Some fields are rare disease codes.
+    expected_findings:
+      - anonymization
+      - special_category
+    expected_articles:
+      - "Art. 5 GDPR"
+      - "Art. 89 GDPR"
+    expected_documents:
+      - dpia
+      - ropa
+      - checklist
+      - retention_policy
+
+  - id: SC-C-020
+    title: Multi-tenant B2B SaaS CRM
+    difficulty: medium
+    system_description: >
+      We are processor for customer tenants; each tenant is controller. Subprocessors notified via
+      email only. Tenant data in EU; our support in India accesses production with break-glass.
+      Breach playbooks differ per tenant SLA.
+    expected_findings:
+      - processor
+      - breach
+      - transfers
+    expected_articles:
+      - "Art. 28 GDPR"
+      - "Art. 33 GDPR"
+      - "Art. 44 GDPR"
+    expected_documents:
+      - ropa
+      - checklist
+      - retention_policy
