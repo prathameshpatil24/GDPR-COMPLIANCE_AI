@@ -1,9 +1,9 @@
-# Gold scenarios calibrated for precision: expected_articles match observed pipeline
-# article hits for the reference eval run; broader legitimate cites live in acceptable_extras.
+# Unified gold scenarios: violation_analysis (SC-V-*) and compliance_assessment (SC-C-*).
 scenarios:
-- id: SC-001
+- id: SC-V-001
   title: Marketing emails without consent
-  scenario: 'A retailer emails marketing offers to customers who only accepted terms of service but never ticked a marketing consent box.
+  scenario: 'A retailer emails marketing offers to customers who only accepted terms of service but never ticked a marketing
+    consent box.
 
     '
   expected_articles:
@@ -29,9 +29,13 @@ scenarios:
   - consent
   - direct-marketing
   difficulty: easy
-- id: SC-002
+  mode: violation_analysis
+  category: consent
+  expected_laws: []
+- id: SC-V-002
   title: Data breach without notification
-  scenario: 'A company suffers a ransomware attack exposing 50,000 customer records including names, emails, and payment data. They do not notify the supervisory authority or affected individuals.
+  scenario: 'A company suffers a ransomware attack exposing 50,000 customer records including names, emails, and payment data.
+    They do not notify the supervisory authority or affected individuals.
 
     '
   expected_articles:
@@ -51,9 +55,13 @@ scenarios:
   - notification-to-dpa
   - notification-to-subjects
   difficulty: easy
-- id: SC-003
+  mode: violation_analysis
+  category: security-and-breaches
+  expected_laws: []
+- id: SC-V-003
   title: Refusing erasure request
-  scenario: 'A user requests deletion of their account and associated activity data, but the company refuses and keeps the data for advertising analytics.
+  scenario: 'A user requests deletion of their account and associated activity data, but the company refuses and keeps the
+    data for advertising analytics.
 
     '
   expected_articles:
@@ -76,9 +84,13 @@ scenarios:
   - erasure
   - data-subject-rights
   difficulty: easy
-- id: SC-004
+  mode: violation_analysis
+  category: erasure
+  expected_laws: []
+- id: SC-V-004
   title: No privacy notice provided
-  scenario: 'A mobile app collects location and contact data at install but provides no privacy notice or information about purposes or retention.
+  scenario: 'A mobile app collects location and contact data at install but provides no privacy notice or information about
+    purposes or retention.
 
     '
   expected_articles:
@@ -103,9 +115,14 @@ scenarios:
   - information
   - transparency
   difficulty: easy
-- id: SC-005
+  mode: violation_analysis
+  category: information
+  expected_laws:
+  - § 25
+- id: SC-V-005
   title: Collecting excessive data
-  scenario: 'An employer requires full medical histories from all applicants for administrative roles where health data is unnecessary.
+  scenario: 'An employer requires full medical histories from all applicants for administrative roles where health data is
+    unnecessary.
 
     '
   expected_articles:
@@ -128,9 +145,13 @@ scenarios:
   - legal-basis
   - special-categories
   difficulty: easy
-- id: SC-006
+  mode: violation_analysis
+  category: legal-basis
+  expected_laws: []
+- id: SC-V-006
   title: No DPO appointed when required
-  scenario: 'A hospital systematically processes health data at scale for several wards but has not appointed a data protection officer despite mandatory conditions being met.
+  scenario: 'A hospital systematically processes health data at scale for several wards but has not appointed a data protection
+    officer despite mandatory conditions being met.
 
     '
   expected_articles:
@@ -153,9 +174,15 @@ scenarios:
   - dpo
   - special-categories
   difficulty: easy
-- id: SC-007
+  mode: violation_analysis
+  category: dpo
+  expected_laws:
+  - § 38
+  - § 5
+- id: SC-V-007
   title: No DPIA for high-risk processing
-  scenario: 'A city deploys city-wide facial recognition in public transport for profiling frequent travellers without conducting a data protection impact assessment.
+  scenario: 'A city deploys city-wide facial recognition in public transport for profiling frequent travellers without conducting
+    a data protection impact assessment.
 
     '
   expected_articles:
@@ -178,9 +205,13 @@ scenarios:
   - dpia
   - special-categories
   difficulty: easy
-- id: SC-008
+  mode: violation_analysis
+  category: dpia
+  expected_laws: []
+- id: SC-V-008
   title: Children's data without parental consent
-  scenario: 'A social app for children under 13 allows registration with only a self-declared birth date and processes behavioural data for ads without verifiable parental consent.
+  scenario: 'A social app for children under 13 allows registration with only a self-declared birth date and processes behavioural
+    data for ads without verifiable parental consent.
 
     '
   expected_articles:
@@ -202,9 +233,13 @@ scenarios:
   - children
   - consent
   difficulty: easy
-- id: SC-009
+  mode: violation_analysis
+  category: children
+  expected_laws: []
+- id: SC-V-009
   title: No lawful basis for processing
-  scenario: 'A startup ingests purchased email lists and sends product announcements without consent, contract, legitimate interest analysis, or other documented basis.
+  scenario: 'A startup ingests purchased email lists and sends product announcements without consent, contract, legitimate
+    interest analysis, or other documented basis.
 
     '
   expected_articles:
@@ -227,9 +262,13 @@ scenarios:
   - legal-basis
   - consent
   difficulty: easy
-- id: SC-010
+  mode: violation_analysis
+  category: legal-basis
+  expected_laws: []
+- id: SC-V-010
   title: Denying subject access request
-  scenario: 'A bank tells a customer that access requests are only processed once per year and refuses a second request without invoking any statutory exception.
+  scenario: 'A bank tells a customer that access requests are only processed once per year and refuses a second request without
+    invoking any statutory exception.
 
     '
   expected_articles:
@@ -246,9 +285,14 @@ scenarios:
   - access
   - data-subject-rights
   difficulty: easy
-- id: SC-011
+  mode: violation_analysis
+  category: access
+  expected_laws:
+  - § 34
+- id: SC-V-011
   title: Third-party data sharing without informing subjects
-  scenario: 'A retailer obtains personal data from a data broker and begins profiling purchases without providing the information required where data were not obtained from the data subject.
+  scenario: 'A retailer obtains personal data from a data broker and begins profiling purchases without providing the information
+    required where data were not obtained from the data subject.
 
     '
   expected_articles:
@@ -272,9 +316,14 @@ scenarios:
   - information
   - controller-processor
   difficulty: medium
-- id: SC-012
+  mode: violation_analysis
+  category: information
+  expected_laws:
+  - § 33
+- id: SC-V-012
   title: Employee monitoring without transparency
-  scenario: 'A German employer monitors employee emails and keystrokes without prior notice, policy update, or involvement of employee representation where required.
+  scenario: 'A German employer monitors employee emails and keystrokes without prior notice, policy update, or involvement
+    of employee representation where required.
 
     '
   expected_articles:
@@ -301,9 +350,14 @@ scenarios:
   - transparency
   - legal-basis
   difficulty: medium
-- id: SC-013
+  mode: violation_analysis
+  category: employment
+  expected_laws:
+  - § 26
+- id: SC-V-013
   title: Transfer to US without adequate safeguards
-  scenario: 'A German SaaS vendor moves customer support tickets with personal data to a US analytics provider without standard contractual clauses, BCRs, or an adequacy decision.
+  scenario: 'A German SaaS vendor moves customer support tickets with personal data to a US analytics provider without standard
+    contractual clauses, BCRs, or an adequacy decision.
 
     '
   expected_articles:
@@ -329,9 +383,13 @@ scenarios:
   expected_topics:
   - transfers
   difficulty: medium
-- id: SC-014
+  mode: violation_analysis
+  category: transfers
+  expected_laws: []
+- id: SC-V-014
   title: Legitimate interest without balancing test
-  scenario: 'A telecom monetises detailed location trails for ad partners claiming legitimate interest but has no documented balancing test or meaningful opt-out beyond marketing toggles.
+  scenario: 'A telecom monetises detailed location trails for ad partners claiming legitimate interest but has no documented
+    balancing test or meaningful opt-out beyond marketing toggles.
 
     '
   expected_articles:
@@ -353,9 +411,14 @@ scenarios:
   - legitimate-interest
   - object
   difficulty: medium
-- id: SC-015
+  mode: violation_analysis
+  category: legitimate-interest
+  expected_laws:
+  - § 9
+- id: SC-V-015
   title: Automated decision-making without human review
-  scenario: 'An online insurer automatically rejects life insurance applicants with no human review, no meaningful information about the logic, and no right to contest effectively.
+  scenario: 'An online insurer automatically rejects life insurance applicants with no human review, no meaningful information
+    about the logic, and no right to contest effectively.
 
     '
   expected_articles:
@@ -372,9 +435,14 @@ scenarios:
   expected_topics:
   - automated-decisions
   difficulty: medium
-- id: SC-016
+  mode: violation_analysis
+  category: automated-decisions
+  expected_laws:
+  - § 37
+- id: SC-V-016
   title: Retaining data beyond stated purpose
-  scenario: 'A loyalty programme keeps transaction data indefinitely after the stated purpose was annual reward calculation, with no retention review.
+  scenario: 'A loyalty programme keeps transaction data indefinitely after the stated purpose was annual reward calculation,
+    with no retention review.
 
     '
   expected_articles:
@@ -392,9 +460,13 @@ scenarios:
   expected_topics:
   - legal-basis
   difficulty: medium
-- id: SC-017
+  mode: violation_analysis
+  category: legal-basis
+  expected_laws: []
+- id: SC-V-017
   title: Processor exceeds controller instructions
-  scenario: 'A payroll processor runs its own analytics on employee data and shares insights with third parties beyond the controller''s documented instructions.
+  scenario: 'A payroll processor runs its own analytics on employee data and shares insights with third parties beyond the
+    controller''s documented instructions.
 
     '
   expected_articles:
@@ -414,9 +486,15 @@ scenarios:
   expected_topics:
   - controller-processor
   difficulty: medium
-- id: SC-018
+  mode: violation_analysis
+  category: controller-processor
+  expected_laws:
+  - § 26
+  - § 62
+- id: SC-V-018
   title: Cookie tracking without consent
-  scenario: 'A news site drops non-essential tracking cookies before any user choice and maps reading habits to ad profiles without a valid consent flow.
+  scenario: 'A news site drops non-essential tracking cookies before any user choice and maps reading habits to ad profiles
+    without a valid consent flow.
 
     '
   expected_articles:
@@ -445,9 +523,14 @@ scenarios:
   - consent
   - telemedia
   difficulty: medium
-- id: SC-019
+  mode: violation_analysis
+  category: consent
+  expected_laws:
+  - § 51
+- id: SC-V-019
   title: Repurposing data without new basis
-  scenario: 'A charity uses donor emails collected for disaster relief to solicit unrelated political donations without a new legal basis or transparency update.
+  scenario: 'A charity uses donor emails collected for disaster relief to solicit unrelated political donations without a
+    new legal basis or transparency update.
 
     '
   expected_articles:
@@ -470,9 +553,13 @@ scenarios:
   - legal-basis
   - consent
   difficulty: medium
-- id: SC-020
+  mode: violation_analysis
+  category: legal-basis
+  expected_laws: []
+- id: SC-V-020
   title: No records of processing activities
-  scenario: 'A mid-size manufacturer profiles suppliers at scale but maintains no Article 30 records despite regular complex processing.
+  scenario: 'A mid-size manufacturer profiles suppliers at scale but maintains no Article 30 records despite regular complex
+    processing.
 
     '
   expected_articles:
@@ -488,9 +575,13 @@ scenarios:
   expected_topics:
   - controller-processor
   difficulty: medium
-- id: SC-021
+  mode: violation_analysis
+  category: controller-processor
+  expected_laws: []
+- id: SC-V-021
   title: Lead supervisory authority unclear
-  scenario: 'A multinational processes data across several EU establishments with conflicting views on main establishment and no clear lead authority cooperation.
+  scenario: 'A multinational processes data across several EU establishments with conflicting views on main establishment
+    and no clear lead authority cooperation.
 
     '
   expected_articles:
@@ -507,9 +598,13 @@ scenarios:
   expected_topics:
   - controller-processor
   difficulty: hard
-- id: SC-022
+  mode: violation_analysis
+  category: controller-processor
+  expected_laws: []
+- id: SC-V-022
   title: Health data for research without Article 9 ground
-  scenario: 'A hospital reuse pipeline moves identifiable patient cohorts into a commercial research project without Article 9 grounds or Article 89 safeguards.
+  scenario: 'A hospital reuse pipeline moves identifiable patient cohorts into a commercial research project without Article
+    9 grounds or Article 89 safeguards.
 
     '
   expected_articles:
@@ -531,9 +626,14 @@ scenarios:
   expected_topics:
   - special-categories
   difficulty: hard
-- id: SC-023
+  mode: violation_analysis
+  category: special-categories
+  expected_laws:
+  - § 27
+- id: SC-V-023
   title: Pseudonymised data re-identification risk
-  scenario: 'A vendor stores pseudonymised clickstreams but retains a wide re-linking key in the same environment without technical measures against re-identification.
+  scenario: 'A vendor stores pseudonymised clickstreams but retains a wide re-linking key in the same environment without
+    technical measures against re-identification.
 
     '
   expected_articles:
@@ -550,9 +650,14 @@ scenarios:
   - controller-processor
   - security-of-processing
   difficulty: hard
-- id: SC-024
+  mode: violation_analysis
+  category: controller-processor
+  expected_laws:
+  - § 19
+- id: SC-V-024
   title: Joint controllers disagree on requests
-  scenario: 'Two brands run a joint loyalty programme but give conflicting answers to access requests and fail to arrange a single contact point in the arrangement.
+  scenario: 'Two brands run a joint loyalty programme but give conflicting answers to access requests and fail to arrange
+    a single contact point in the arrangement.
 
     '
   expected_articles:
@@ -569,9 +674,14 @@ scenarios:
   - information
   - data-subject-rights
   difficulty: hard
-- id: SC-025
+  mode: violation_analysis
+  category: information
+  expected_laws:
+  - § 63
+- id: SC-V-025
   title: Portability for inferred profile data
-  scenario: 'A user requests portability of an AI-inferred spending propensity score; the controller refuses to provide any structured export of that profile.
+  scenario: 'A user requests portability of an AI-inferred spending propensity score; the controller refuses to provide any
+    structured export of that profile.
 
     '
   expected_articles:
@@ -589,9 +699,13 @@ scenarios:
   expected_topics:
   - portability
   difficulty: hard
-- id: SC-026
+  mode: violation_analysis
+  category: portability
+  expected_laws: []
+- id: SC-V-026
   title: Facial recognition in retail
-  scenario: 'A retailer deploys facial recognition in stores for security and marketing, claiming legitimate interest, without DPIA transparency or special-category safeguards.
+  scenario: 'A retailer deploys facial recognition in stores for security and marketing, claiming legitimate interest, without
+    DPIA transparency or special-category safeguards.
 
     '
   expected_articles:
@@ -616,9 +730,13 @@ scenarios:
   - special-categories
   - dpia
   difficulty: hard
-- id: SC-027
+  mode: violation_analysis
+  category: legitimate-interest
+  expected_laws: []
+- id: SC-V-027
   title: Objection to credit profiling
-  scenario: 'A credit bureau continues automated profiling for scoring after an explicit objection without demonstrating compelling grounds overriding the data subject''s interests.
+  scenario: 'A credit bureau continues automated profiling for scoring after an explicit objection without demonstrating compelling
+    grounds overriding the data subject''s interests.
 
     '
   expected_articles:
@@ -637,9 +755,13 @@ scenarios:
   - object
   - automated-decisions
   difficulty: hard
-- id: SC-028
+  mode: violation_analysis
+  category: object
+  expected_laws: []
+- id: SC-V-028
   title: Breach across processor chain
-  scenario: 'A sub-processor suffers a breach affecting several controllers'' data but delays informing the processor, jeopardising timely controller notifications to authorities.
+  scenario: 'A sub-processor suffers a breach affecting several controllers'' data but delays informing the processor, jeopardising
+    timely controller notifications to authorities.
 
     '
   expected_articles:
@@ -660,9 +782,13 @@ scenarios:
   - controller-processor
   - notification-to-dpa
   difficulty: hard
-- id: SC-029
+  mode: violation_analysis
+  category: controller-processor
+  expected_laws: []
+- id: SC-V-029
   title: Withdrawal of consent after sharing
-  scenario: 'A user withdraws marketing consent; the controller had already shared the profile with ad partners and refuses erasure of downstream copies.
+  scenario: 'A user withdraws marketing consent; the controller had already shared the profile with ad partners and refuses
+    erasure of downstream copies.
 
     '
   expected_articles:
@@ -684,9 +810,13 @@ scenarios:
   - consent
   - erasure
   difficulty: hard
-- id: SC-030
+  mode: violation_analysis
+  category: consent
+  expected_laws: []
+- id: SC-V-030
   title: BCRs versus SCCs for intra-group transfers
-  scenario: 'A group relies on ad hoc oral arrangements for EU-to-third-country employee data transfers instead of binding corporate rules or standard contractual clauses.
+  scenario: 'A group relies on ad hoc oral arrangements for EU-to-third-country employee data transfers instead of binding
+    corporate rules or standard contractual clauses.
 
     '
   expected_articles:
@@ -708,3 +838,568 @@ scenarios:
   expected_topics:
   - transfers
   difficulty: hard
+  mode: violation_analysis
+  category: transfers
+  expected_laws: []
+- id: SC-C-001
+  mode: compliance_assessment
+  title: SaaS newsletter platform
+  difficulty: medium
+  category: consent
+  system_description: 'We''re shipping a B2B newsletter product. Signup is a single field for work email plus optional first
+    name.
+
+    Mailchimp sends the campaigns; we only sync lists via their API. DB is Postgres in eu-central-1.
+
+    Legal never finished a DPA addendum with them. Privacy page mentions "marketing" in one bullet.
+
+    Open/click tracking is on by default. Unsubscribe is one click but also downgrades the whole account.
+
+    '
+  expected_findings:
+  - area: consent
+    min_status: at_risk
+  - area: processor
+    min_status: at_risk
+  - area: transparency
+    min_status: at_risk
+  expected_articles:
+  - '6'
+  - '7'
+  - '13'
+  - '28'
+  - '32'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - consent_flow
+  - retention_policy
+  notes: Should surface Mailchimp as processor, consent/Art.13 gaps, tracking defaults.
+- id: SC-C-002
+  mode: compliance_assessment
+  title: Mobile fitness app with location
+  difficulty: hard
+  category: special-categories
+  system_description: 'iOS/Android app tracks runs with GPS always-on when "workout mode" is enabled. We also pull heart rate
+    from Apple Health.
+
+    Backend buckets are multi-region; backups land in us-east-1. Product wants to sell "aggregated heatmaps" to an insurer
+    partner — spec still vague.
+
+    No DPIA doc in Drive. Consent screen is a single OK on first launch.
+
+    '
+  expected_findings:
+  - area: consent
+    min_status: at_risk
+  - area: special_category
+    min_status: at_risk
+  - area: dpia
+    min_status: at_risk
+  - area: transfers
+    min_status: at_risk
+  expected_articles:
+  - '9'
+  - '35'
+  - '44'
+  - '6'
+  - '7'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - consent_flow
+  - retention_policy
+  notes: Health + location + third-country backup + vague monetisation.
+- id: SC-C-003
+  title: E-commerce with Stripe payments
+  mode: compliance_assessment
+  difficulty: medium
+  category: security-and-breaches
+  system_description: 'Shopify-like storefront; Stripe Checkout handles cards, we store billing name + last4 ourselves in
+    MySQL (Frankfurt).
+
+    Logs keep full request payloads for 400 days "for fraud". Incident runbook says "tell the founder" but nothing about DPA
+    timelines.
+
+    No formal DPIA; engineering says Stripe is PCI scope so we''re fine.
+
+    '
+  expected_findings:
+  - area: security
+    min_status: at_risk
+  - area: breach
+    min_status: at_risk
+  - area: processor
+    min_status: at_risk
+  expected_articles:
+  - '28'
+  - '32'
+  - '33'
+  - '34'
+  expected_documents:
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Processor agreements, retention, breach process.
+- id: SC-C-004
+  title: AI customer support chatbot
+  mode: compliance_assessment
+  difficulty: hard
+  category: automated-decisions
+  system_description: 'Website widget answers refunds using an LLM; conversations can include order IDs and emails typed by
+    users.
+
+    We log everything to Snowflake for "quality" and fine-tune weekly. Refunds above €500 are auto-denied with no human in
+    the loop for the first release.
+
+    No separate policy for AI; privacy notice still the 2019 PDF.
+
+    '
+  expected_findings:
+  - area: automated
+    min_status: at_risk
+  - area: transparency
+    min_status: at_risk
+  - area: data_minimization
+    min_status: at_risk
+  expected_articles:
+  - '22'
+  - '13'
+  - '14'
+  - '5'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - consent_flow
+  notes: Art.22 + transparency + training logs.
+- id: SC-C-005
+  title: HR management system
+  mode: compliance_assessment
+  difficulty: hard
+  category: employment
+  system_description: 'Cloud HRIS for 4k staff across DE/FR. Holds payroll, reviews, and optional "wellness" self-disclosures
+    managers can open.
+
+    Ireland region. CSV export to HRBP laptops is common; IT says DLP is "on the roadmap". No retention schedule after termination.
+
+    Works council not looped in for the monitoring features roadmap.
+
+    '
+  expected_findings:
+  - area: special_category
+    min_status: at_risk
+  - area: retention
+    min_status: at_risk
+  - area: security
+    min_status: at_risk
+  expected_articles:
+  - '9'
+  - '5'
+  - '32'
+  - '88'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Employee + health-ish fields + retention + exports.
+- id: SC-C-006
+  title: Healthcare patient portal
+  mode: compliance_assessment
+  difficulty: hard
+  category: special-categories
+  system_description: 'Patients see labs and message care teams. Auth is password-only; MFA is "planned". Audit logs 30 days.
+
+    Primary DB in EU; DR copy in Virginia under SCCs from 2019. Vendor pen test last year; no TIA on file.
+
+    '
+  expected_findings:
+  - area: security
+    min_status: at_risk
+  - area: transfers
+    min_status: at_risk
+  - area: special_category
+    min_status: at_risk
+  expected_articles:
+  - '9'
+  - '32'
+  - '15'
+  - '44'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - retention_policy
+  notes: High risk health data, access logging, US copy.
+- id: SC-C-007
+  title: Smart home IoT hub
+  mode: compliance_assessment
+  difficulty: medium
+  category: children
+  system_description: 'Voice hub for routines; audio snippets go to cloud ASR. Packaged for families; parental PIN is optional.
+
+    Legacy firmware updates over HTTP. Telemetry vendor in Singapore receives device IDs + transcript hashes.
+
+    '
+  expected_findings:
+  - area: children
+    min_status: at_risk
+  - area: security
+    min_status: at_risk
+  - area: transfers
+    min_status: at_risk
+  expected_articles:
+  - '8'
+  - '32'
+  - '44'
+  - '5'
+  expected_documents:
+  - dpia
+  - checklist
+  - consent_flow
+  notes: Kids, weak transport, third country.
+- id: SC-C-008
+  title: User behavior analytics platform
+  mode: compliance_assessment
+  difficulty: hard
+  category: profiling
+  system_description: 'We stitch cross-site profiles from first-party cookies + partner IDs. LI claimed for everything EU-facing;
+    no CMP on the marketing site yet.
+
+    Profiles are resold under a separate "data coop" contract engineers barely know about.
+
+    '
+  expected_findings:
+  - area: consent
+    min_status: at_risk
+  - area: legitimate
+    min_status: insufficient_info
+  - area: transparency
+    min_status: at_risk
+  expected_articles:
+  - '6'
+  - '21'
+  - '22'
+  - '13'
+  expected_documents:
+  - ropa
+  - checklist
+  - consent_flow
+  notes: LI vs consent, profiling, resale.
+- id: SC-C-009
+  title: Children's educational app
+  mode: compliance_assessment
+  difficulty: medium
+  category: children
+  system_description: 'Ages 8–12 learning app: parent email, kid nickname, lesson events. Partner push promos run on weekends.
+
+    Age gate is "enter birthday" with no verification. Data in GCP europe-west3.
+
+    '
+  expected_findings:
+  - area: children
+    min_status: at_risk
+  - area: consent
+    min_status: at_risk
+  expected_articles:
+  - '8'
+  - '5'
+  - '7'
+  expected_documents:
+  - dpia
+  - checklist
+  - consent_flow
+  notes: Art.8 + weak age assurance.
+- id: SC-C-010
+  title: Cross-border SaaS US+EU
+  mode: compliance_assessment
+  difficulty: medium
+  category: transfers
+  system_description: 'EU customers default to Dublin; support engineers in Austin can impersonate tenants for debugging with
+    break-glass.
+
+    SCC package signed 2021; no refresh post Schrems II guidance. Subprocessors listed only in an internal Notion.
+
+    '
+  expected_findings:
+  - area: transfers
+    min_status: at_risk
+  - area: transparency
+    min_status: at_risk
+  expected_articles:
+  - '44'
+  - '46'
+  - '13'
+  - '28'
+  expected_documents:
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Transfer tools + transparency + access from US.
+- id: SC-C-011
+  title: AI recruitment screening
+  mode: compliance_assessment
+  difficulty: hard
+  category: automated-decisions
+  system_description: 'ATS ranks CVs with proprietary scoring; candidates get a generic "not selected" mail. Video interview
+    "engagement" scoring enabled for sales roles.
+
+    Talent pool retains all applications forever "for future reqs."
+
+    '
+  expected_findings:
+  - area: automated
+    min_status: at_risk
+  - area: transparency
+    min_status: at_risk
+  - area: retention
+    min_status: at_risk
+  expected_articles:
+  - '22'
+  - '13'
+  - '5'
+  - '9'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  notes: Art.22 + special categories risk + retention.
+- id: SC-C-012
+  title: Social media monitoring dashboard
+  mode: compliance_assessment
+  difficulty: medium
+  category: legitimate-interest
+  system_description: 'Brand tool ingests public posts; some customers paste shared login cookies to pull "private" brand
+    groups.
+
+    No DSAR playbook; support forwards angry emails to legal ad hoc.
+
+    '
+  expected_findings:
+  - area: data_subject_rights
+    min_status: at_risk
+  - area: legitimate
+    min_status: at_risk
+  expected_articles:
+  - '6'
+  - '15'
+  - '12'
+  expected_documents:
+  - ropa
+  - checklist
+  notes: Scraping/LI grey area + access rights.
+- id: SC-C-013
+  title: Cloud backup service
+  mode: compliance_assessment
+  difficulty: easy
+  category: processor
+  system_description: 'Client-side encrypted blobs; we only store ciphertext in EU DCs. Keys never leave customer devices.
+
+    Subprocessors listed in terms v3.2. Billing contact details kept 7 years; file blobs deleted on cancel within 24h claim.
+
+    '
+  expected_findings:
+  - area: processor
+    min_status: compliant
+  - area: security
+    min_status: compliant
+  expected_articles:
+  - '28'
+  - '32'
+  expected_documents:
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Mostly solid; still verify subprocessors and retention wording.
+- id: SC-C-014
+  title: Customer support ticketing
+  mode: compliance_assessment
+  difficulty: easy
+  category: data-subject-rights
+  system_description: 'Zendesk EU shard; tickets with email + attachments. Auto-delete at 24 months. Role-based access for
+    agents.
+
+    DPA in place; subprocessors linked from vendor trust page.
+
+    '
+  expected_findings:
+  - area: retention
+    min_status: compliant
+  - area: processor
+    min_status: compliant
+  expected_articles:
+  - '15'
+  - '17'
+  - '28'
+  expected_documents:
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Baseline good hygiene scenario.
+- id: SC-C-015
+  title: Loyalty rewards program
+  mode: compliance_assessment
+  difficulty: medium
+  category: consent
+  system_description: 'Phone number links purchases; segments shared with partner malls under handshake deals. Single marketing
+    tick at checkout.
+
+    Partners process in several countries; legal says "they''re controllers too" but contracts are thin.
+
+    '
+  expected_findings:
+  - area: consent
+    min_status: at_risk
+  - area: purpose_limitation
+    min_status: at_risk
+  - area: transfers
+    min_status: at_risk
+  expected_articles:
+  - '5'
+  - '6'
+  - '44'
+  - '13'
+  expected_documents:
+  - ropa
+  - checklist
+  - consent_flow
+  notes: Purpose + sharing + transfers.
+- id: SC-C-016
+  title: Office video surveillance
+  mode: compliance_assessment
+  difficulty: medium
+  category: dpia
+  system_description: 'CCTV at entrances, 90-day retention. Small signs mention "security". Footage share is SMB wide open.
+
+    Piloting face-based door unlock; no DPIA paper yet.
+
+    '
+  expected_findings:
+  - area: dpia
+    min_status: at_risk
+  - area: legitimate
+    min_status: at_risk
+  - area: security
+    min_status: at_risk
+  expected_articles:
+  - '6'
+  - '32'
+  - '35'
+  - '5'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  notes: Biometric risk + access control to footage.
+- id: SC-C-017
+  title: Employee productivity monitoring
+  mode: compliance_assessment
+  difficulty: hard
+  category: employment
+  system_description: 'Agent logs keystrokes and 5-minute screenshots for remote staff globally. German HQ; Betriebsrat not
+    informed before pilot.
+
+    Data retained 12 months "for investigations".
+
+    '
+  expected_findings:
+  - area: dpia
+    min_status: at_risk
+  - area: proportionality
+    min_status: at_risk
+  - area: employment
+    min_status: at_risk
+  expected_articles:
+  - '5'
+  - '88'
+  - '32'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  notes: Works council + proportionality + monitoring.
+- id: SC-C-018
+  title: Fintech credit scoring
+  mode: compliance_assessment
+  difficulty: hard
+  category: automated-decisions
+  system_description: 'Automated loan decisions from open banking categories; declines are boilerplate. Merchant codes sometimes
+    imply health spend.
+
+    No meaningful human review path in v1. Model cards exist only in Slack threads.
+
+    '
+  expected_findings:
+  - area: automated
+    min_status: at_risk
+  - area: special_category
+    min_status: insufficient_info
+  - area: transparency
+    min_status: at_risk
+  expected_articles:
+  - '22'
+  - '9'
+  - '13'
+  - '14'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - consent_flow
+  notes: Art.22 + inferred special categories + explainability.
+- id: SC-C-019
+  title: Research platform pseudonymized data
+  mode: compliance_assessment
+  difficulty: hard
+  category: research
+  system_description: 'Clinic cohort export with k=5 on demographics; rare disease field still spiky. Re-ID risk memo is 2018.
+
+    Universities get extracts under DUAs; one lab keeps full ZIP in a laptop sync folder.
+
+    '
+  expected_findings:
+  - area: anonymization
+    min_status: at_risk
+  - area: special_category
+    min_status: at_risk
+  expected_articles:
+  - '5'
+  - '89'
+  - '9'
+  - '32'
+  expected_documents:
+  - dpia
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Pseudonymization vs anonymization + Art.89.
+- id: SC-C-020
+  title: Multi-tenant B2B CRM
+  mode: compliance_assessment
+  difficulty: medium
+  category: controller-processor
+  system_description: 'We process on behalf of tenant controllers; subprocessors announced by monthly email wall of text.
+
+    EU data at rest; Mumbai support uses JIT prod access. Tenant A wants breach SLAs; Tenant B doesn''t — playbook varies.
+
+    '
+  expected_findings:
+  - area: processor
+    min_status: at_risk
+  - area: breach
+    min_status: at_risk
+  - area: transfers
+    min_status: at_risk
+  expected_articles:
+  - '28'
+  - '33'
+  - '44'
+  - '32'
+  expected_documents:
+  - ropa
+  - checklist
+  - retention_policy
+  notes: Processor chain + breach + third-country support.
