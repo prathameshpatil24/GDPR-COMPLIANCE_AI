@@ -8,6 +8,7 @@ import LoadingState from '@/components/analyze/LoadingState'
 import ComplianceReport from '@/components/results/ComplianceReport'
 import ViolationReport from '@/components/results/ViolationReport'
 import { Button } from '@/components/ui/button'
+import { useNavMetrics } from '@/context/NavMetricsContext'
 import { useToast } from '@/context/ToastContext'
 import { useAnalyze } from '@/hooks/useAnalyze'
 import { MODES } from '@/lib/constants'
@@ -24,6 +25,7 @@ export default function AnalyzePage() {
   const [text, setText] = useState('')
   const { result, loading, error, elapsedSec, completedAt, analyze, clear } = useAnalyze()
   const { showToast } = useToast()
+  const { refresh: refreshNavMetrics } = useNavMetrics()
   const resultsRef = useRef(null)
   const lastToastedAnalysisId = useRef(null)
   const reduceMotion = useReducedMotion()
@@ -51,6 +53,7 @@ export default function AnalyzePage() {
     if (id && id !== lastToastedAnalysisId.current) {
       lastToastedAnalysisId.current = id
       showToast({ type: 'success', message: 'Analysis complete' })
+      void refreshNavMetrics()
       window.requestAnimationFrame(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
@@ -58,7 +61,7 @@ export default function AnalyzePage() {
     if (!result) {
       lastToastedAnalysisId.current = null
     }
-  }, [result, showToast])
+  }, [result, showToast, refreshNavMetrics])
 
   useEffect(() => {
     if (error) {

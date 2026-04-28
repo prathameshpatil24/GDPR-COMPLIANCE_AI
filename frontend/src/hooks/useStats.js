@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { getStats } from '@/api/client'
+import { getStats, getErrorMessage } from '@/api/client'
 
-/** Fetch aggregate stats (optional; used when Stats page is wired). */
+/** Fetch dashboard stats from `/api/v1/stats`. */
 export function useStats() {
-  const [data, setData] = useState(null)
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const refetch = useCallback(async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const res = await getStats()
-      setData(res.data)
-    } catch (e) {
-      setError(e)
-      setData(null)
+      setStats(res.data)
+    } catch (err) {
+      setError(getErrorMessage(err))
+      setStats(null)
     } finally {
       setLoading(false)
     }
@@ -24,10 +24,10 @@ export function useStats() {
 
   useEffect(() => {
     const id = window.setTimeout(() => {
-      void refetch()
+      void load()
     }, 0)
     return () => window.clearTimeout(id)
-  }, [refetch])
+  }, [load])
 
-  return { data, loading, error, refetch }
+  return { stats, loading, error, refetch: load }
 }

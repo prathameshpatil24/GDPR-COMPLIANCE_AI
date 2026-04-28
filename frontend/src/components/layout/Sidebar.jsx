@@ -1,6 +1,7 @@
 import { BarChart3, Clock, Search, Settings } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
+import { useNavMetrics } from '@/context/NavMetricsContext'
 import { APP_NAME, APP_VERSION, NAV_ITEMS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +17,8 @@ const ICON_MAP = {
  * @param {{ className?: string }} props
  */
 export default function Sidebar({ className }) {
+  const { totalQueries } = useNavMetrics()
+
   return (
     <aside
       className={cn(
@@ -40,7 +43,7 @@ export default function Sidebar({ className }) {
               end={item.path === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-slate-200/80 text-indigo-600 dark:bg-slate-800/50 dark:text-indigo-400'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/30 dark:hover:text-slate-200'
@@ -48,7 +51,14 @@ export default function Sidebar({ className }) {
               }
             >
               <Icon className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.path === '/history' &&
+              totalQueries != null &&
+              totalQueries > 0 ? (
+                <span className="min-w-[1.25rem] rounded-full bg-slate-200 px-1.5 text-center text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                  {totalQueries > 99 ? '99+' : totalQueries}
+                </span>
+              ) : null}
             </NavLink>
           )
         })}

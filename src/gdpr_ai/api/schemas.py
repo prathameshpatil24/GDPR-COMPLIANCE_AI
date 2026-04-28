@@ -181,8 +181,29 @@ class HistoryDetailResponse(BaseModel):
     cost_eur: float | None = None
 
 
+class DailyQueryCount(BaseModel):
+    """Queries logged on one calendar day (UTC date from stored timestamp)."""
+
+    date: str
+    count: int
+
+
+class DailyCost(BaseModel):
+    """Summed estimated cost for one day."""
+
+    date: str
+    cost_eur: float
+
+
+class DailyLatency(BaseModel):
+    """Average wall latency for one day."""
+
+    date: str
+    avg_latency_ms: float
+
+
 class StatsResponse(BaseModel):
-    """Aggregate query log metrics (same source as ``gdpr-check stats``)."""
+    """Aggregate query log metrics plus dashboard time series (query log SQLite)."""
 
     total_queries: int
     avg_latency_ms: float
@@ -190,3 +211,8 @@ class StatsResponse(BaseModel):
     total_cost_eur: float
     total_tokens: float
     avg_violations_per_query: float
+    queries_by_day: list[DailyQueryCount] = Field(default_factory=list)
+    severity_distribution: dict[str, int] = Field(default_factory=dict)
+    mode_distribution: dict[str, int] = Field(default_factory=dict)
+    cost_by_day: list[DailyCost] = Field(default_factory=list)
+    latency_by_day: list[DailyLatency] = Field(default_factory=list)

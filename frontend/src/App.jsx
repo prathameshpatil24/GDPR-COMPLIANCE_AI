@@ -5,6 +5,7 @@ import { healthCheck } from '@/api/client'
 import AnimatedOutlet from '@/components/layout/AnimatedOutlet'
 import Header from '@/components/layout/Header'
 import Sidebar from '@/components/layout/Sidebar'
+import { NavMetricsProvider } from '@/context/NavMetricsContext'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { ToastProvider } from '@/context/ToastContext'
 import AnalyzePage from '@/pages/AnalyzePage'
@@ -54,7 +55,9 @@ export default function App() {
     <ThemeProvider>
       <ToastProvider>
         <BrowserRouter>
-          <AppShell />
+          <NavMetricsProvider>
+            <AppShell />
+          </NavMetricsProvider>
         </BrowserRouter>
       </ToastProvider>
     </ThemeProvider>
