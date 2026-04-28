@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import ModeToggle from '@/components/analyze/ModeToggle'
 import ScenarioInput from '@/components/analyze/ScenarioInput'
@@ -10,9 +10,9 @@ import LoadingState from '@/components/analyze/LoadingState'
 import ComplianceReport from '@/components/results/ComplianceReport'
 import ViolationReport from '@/components/results/ViolationReport'
 import { Button } from '@/components/ui/button'
+import { useAnalyzeContext } from '@/context/AnalyzeContext'
 import { useNavMetrics } from '@/context/NavMetricsContext'
 import { useToast } from '@/context/ToastContext'
-import { useAnalyze } from '@/hooks/useAnalyze'
 import { MODES } from '@/lib/constants'
 
 const MAX_VIOLATION = 8000
@@ -23,17 +23,29 @@ const MIN_VIOLATION = 10
  * Analyze home: mode toggle, input, API-backed reports for violation and compliance.
  */
 export default function AnalyzePage() {
-  const [mode, setMode] = useState(MODES.VIOLATION)
-  const [text, setText] = useState('')
-  const { result, loading, error, elapsedSec, completedAt, analyze, clear } = useAnalyze()
+  const {
+    mode,
+    setMode,
+    inputText,
+    setInputText,
+    result,
+    loading,
+    error,
+    elapsedSec,
+    completedAt,
+    analyze,
+    clear,
+    clearAnalysisState,
+  } = useAnalyzeContext()
   const { showToast } = useToast()
   const { refresh: refreshNavMetrics } = useNavMetrics()
   const resultsRef = useRef(null)
   const lastToastedAnalysisId = useRef(null)
+  const skipModeClearOnMount = useRef(true)
   const reduceMotion = useReducedMotion()
 
   const maxLength = mode === MODES.VIOLATION ? MAX_VIOLATION : MAX_COMPLIANCE
-  const trimmed = text.trim()
+  const trimmed = inputText.trim()
   const canSubmit =
     mode === MODES.VIOLATION ? trimmed.length >= MIN_VIOLATION : trimmed.length > 0
 
@@ -47,8 +59,12 @@ export default function AnalyzePage() {
   }
 
   useEffect(() => {
-    clear()
-  }, [mode, clear])
+    if (skipModeClearOnMount.current) {
+      skipModeClearOnMount.current = false
+      return
+    }
+    clearAnalysisState()
+  }, [mode, clearAnalysisState])
 
   useEffect(() => {
     const id = result?.analysis_id
@@ -83,8 +99,8 @@ export default function AnalyzePage() {
       </p>
       <ModeToggle value={mode} onChange={setMode} disabled={loading} />
       <ScenarioInput
-        value={text}
-        onChange={setText}
+        value={inputText}
+        onChange={setInputText}
         mode={mode}
         maxLength={maxLength}
         disabled={loading}

@@ -31,6 +31,13 @@ export default function Sidebar({ className }) {
 
   const narrow = !sidebarWide
 
+  const historyCountLabel =
+    totalQueries != null && totalQueries > 0
+      ? totalQueries > 99
+        ? '99+'
+        : String(totalQueries)
+      : null
+
   return (
     <>
       {!isLg && mobileOpen ? (
@@ -86,7 +93,7 @@ export default function Sidebar({ className }) {
                   className={({ isActive }) =>
                     cn(
                       'flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-colors duration-150',
-                      narrow ? 'justify-center px-2' : 'px-3',
+                      narrow ? 'relative justify-center px-2' : 'px-3',
                       isActive
                         ? 'bg-slate-200/80 text-indigo-600 dark:bg-slate-800/50 dark:text-indigo-400'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/30 dark:hover:text-slate-200'
@@ -97,14 +104,23 @@ export default function Sidebar({ className }) {
                   {!narrow ? (
                     <>
                       <span className="flex-1">{item.label}</span>
-                      {item.path === '/history' &&
-                      totalQueries != null &&
-                      totalQueries > 0 ? (
-                        <span className="min-w-[1.25rem] rounded-full bg-slate-200 px-1.5 text-center text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-                          {totalQueries > 99 ? '99+' : totalQueries}
+                      {item.path === '/history' && historyCountLabel ? (
+                        <span
+                          className="min-w-[1.25rem] rounded-full bg-slate-200 px-1.5 text-center text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                          aria-hidden
+                        >
+                          {historyCountLabel}
                         </span>
                       ) : null}
                     </>
+                  ) : null}
+                  {narrow && item.path === '/history' && historyCountLabel ? (
+                    <span
+                      className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-200 px-1 text-[10px] font-semibold leading-none text-slate-700 dark:bg-slate-700 dark:text-slate-200"
+                      aria-label={`${totalQueries} analyses in history`}
+                    >
+                      {historyCountLabel}
+                    </span>
                   ) : null}
                 </NavLink>
               )

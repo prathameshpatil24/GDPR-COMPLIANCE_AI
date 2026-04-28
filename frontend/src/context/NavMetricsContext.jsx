@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- Provider + hook */
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
-import { getStats } from '@/api/client'
+import { getHistory, getStats } from '@/api/client'
 
 const NavMetricsContext = createContext({
   /** @type {number | null} */
@@ -18,7 +18,19 @@ export function NavMetricsProvider({ children }) {
   const refresh = useCallback(async () => {
     try {
       const res = await getStats()
-      setTotalQueries(Number(res.data?.total_queries ?? 0))
+      const raw = res.data?.total_queries
+      const n = typeof raw === 'number' ? raw : Number.parseInt(String(raw), 10)
+      if (Number.isFinite(n) && n >= 0) {
+        setTotalQueries(Math.floor(n))
+        return
+      }
+    } catch {
+      /* try history fallback */
+    }
+    try {
+      const res = await getHistory({ limit: 500 })
+      const list = res.data?.analyses
+      setTotalQueries(Array.isArray(list) ? list.length : 0)
     } catch {
       setTotalQueries(null)
     }

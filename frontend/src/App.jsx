@@ -9,6 +9,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import ErrorBoundary from '@/components/shared/ErrorBoundary'
 import Skeleton from '@/components/shared/Skeleton'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { AnalyzeProvider } from '@/context/AnalyzeContext'
 import { NavMetricsProvider } from '@/context/NavMetricsContext'
 import { ShellLayoutProvider, useShellLayout } from '@/context/ShellLayoutContext'
 import { ThemeProvider } from '@/context/ThemeContext'
@@ -104,9 +105,11 @@ export default function App() {
         <BrowserRouter>
           <TooltipProvider>
             <NavMetricsProvider>
-              <ShellLayoutProvider>
-                <AppShell />
-              </ShellLayoutProvider>
+              <AnalyzeProvider>
+                <ShellLayoutProvider>
+                  <AppShell />
+                </ShellLayoutProvider>
+              </AnalyzeProvider>
             </NavMetricsProvider>
           </TooltipProvider>
         </BrowserRouter>
