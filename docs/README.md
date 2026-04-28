@@ -11,11 +11,30 @@ Every document in this folder is version-controlled and updated in lockstep with
 | **v1** | Violation analysis CLI — scenario in, grounded violation report out (**shipped**). |
 | **v2** | Compliance assessment (**intake → map → assess → generate**), local **REST API**, SQLite persistence, document generation, unified **eval** framework, JSON/output hardening, **stats** / **history** (**shipped**). |
 | **v3** | **Web UI** (React dashboard), authentication, rate limiting, feedback capture, PDF export, in-browser reports (**planned**). |
-| **v4** | German-first **multilingual** retrieval and UI strategy, document upload, website scanning, KB refresh at service scale, ToS/privacy, optional commercial licensing (**planned**). |
+| **v4** | **Retrieval Gap Tracker** (closed-loop KB improvement), German-first **multilingual** retrieval, **document upload**, **website scanning**, KB refresh at service scale, ToS/privacy, optional commercial licensing (**planned**). See [v4-overview.md](v4-overview.md). |
 
 ## v2 Scope
 
 Version 1 delivers a **violation analyzer**: free-text scenarios in, grounded violation reports with cited GDPR articles out. Version 2 expands the same product into a **compliance architect** while keeping v1 intact as a first-class mode. v2 accepts a structured (or conversational) **system description** and produces a **compliance blueprint** — risk analysis, DPIA drafts, RoPA templates, consent-flow recommendations, technical implementation guidance, and retention policy drafts — backed by the same retrieval-grounded knowledge base and language-model reasoning engine. v2 adds a REST API (local), SQLite persistence for projects and generated documents, document generation (Jinja2 → markdown), and a new pipeline (**intake → map → assess → generate**) alongside the existing v1 pipeline (**extract → classify → retrieve → reason**). The **browser UI is v3**, not v2. All design docs use clearly marked **v2** sections so v1 material stays easy to find; see [ADR-006](adr/006-dual-mode-architecture.md) and [ADR-007](adr/007-sqlite-for-local-persistence.md).
+
+## V3 — Frontend planning (local SPA)
+
+Implementation-agnostic specs for the **React + Vite** dashboard (v3): overview, design system, motion, component tree, API integration, milestones.
+
+* [v3-overview.md](v3-overview.md)
+* [v3-design-system.md](v3-design-system.md)
+* [v3-animations.md](v3-animations.md)
+* [v3-component-tree.md](v3-component-tree.md)
+* [v3-api-integration.md](v3-api-integration.md)
+* [v3-roadmap.md](v3-roadmap.md)
+
+## V4 — Product planning
+
+Prioritised features: **retrieval gap tracker**, **multilingual retrieval**, **document upload**, **website scanning**.
+
+* [v4-overview.md](v4-overview.md) — rationale, scope, dependencies
+* [v4-gap-tracker.md](v4-gap-tracker.md) — schema, CLI/API, ingestion, metrics
+* [v4-roadmap.md](v4-roadmap.md) — milestones
 
 ## Phase 0 – Overview
 

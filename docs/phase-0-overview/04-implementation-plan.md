@@ -305,9 +305,10 @@ Version 1 is considered shipped when all of the following are true:
 * **Multi-turn** clarifying flows in the UI where designed
 * **Cloud hosting** and **CI/CD** for deployed environments (see Phase 3.20)
 
-**Deferred to v4** (scale and multilingual):
+**Deferred to v4** (see [v4-overview.md](../v4-overview.md) and [v4-roadmap.md](../v4-roadmap.md)):
 
-* **Multilingual** retrieval (German-first) and aligned UI/report language
+* **Retrieval Gap Tracker** — SQLite `retrieval_gaps`, pipeline extraction, `gdpr-check gaps`, `GET /api/v1/gaps`, Stats UI, `scripts/ingest_gaps.py`, re-evaluation, gap-rate metrics
+* **Multilingual** retrieval (German-first) and aligned UI/report language (bilingual index; English responses initially)
 * **Document upload** and **website scanning** as inputs
 * **Knowledge base** refresh cadence for a public service
 * Formal **terms of service** and **privacy policy**

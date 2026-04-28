@@ -140,3 +140,79 @@ class HealthResponse(BaseModel):
 
     status: str
     version: str
+
+
+class HistorySummaryItem(BaseModel):
+    """One row for the analyses history list (app database)."""
+
+    id: str
+    mode: str
+    scenario_system_description: str = Field(
+        "",
+        description="User input: scenario (violation) or system description (compliance).",
+    )
+    severity: str | None = Field(
+        None,
+        description="Violation: severity_level. Compliance: overall_risk_level.",
+    )
+    created_at: str | None = None
+    latency_ms: float | None = Field(None, description="Wall time in ms when duration was logged.")
+    cost_eur: float | None = Field(
+        None,
+        description="Estimated LLM cost in EUR (stored in llm_cost_usd column).",
+    )
+
+
+class HistoryListResponse(BaseModel):
+    """Paginated-style list of past analyses."""
+
+    analyses: list[HistorySummaryItem]
+
+
+class HistoryDetailResponse(BaseModel):
+    """Full stored analysis for history detail view."""
+
+    analysis_id: str
+    mode: str | None
+    result: dict[str, Any]
+    scenario_text: str
+    created_at: str | None = None
+    latency_ms: float | None = None
+    cost_eur: float | None = None
+
+
+class DailyQueryCount(BaseModel):
+    """Queries logged on one calendar day (UTC date from stored timestamp)."""
+
+    date: str
+    count: int
+
+
+class DailyCost(BaseModel):
+    """Summed estimated cost for one day."""
+
+    date: str
+    cost_eur: float
+
+
+class DailyLatency(BaseModel):
+    """Average wall latency for one day."""
+
+    date: str
+    avg_latency_ms: float
+
+
+class StatsResponse(BaseModel):
+    """Aggregate query log metrics plus dashboard time series (query log SQLite)."""
+
+    total_queries: int
+    avg_latency_ms: float
+    avg_cost_eur: float
+    total_cost_eur: float
+    total_tokens: float
+    avg_violations_per_query: float
+    queries_by_day: list[DailyQueryCount] = Field(default_factory=list)
+    severity_distribution: dict[str, int] = Field(default_factory=dict)
+    mode_distribution: dict[str, int] = Field(default_factory=dict)
+    cost_by_day: list[DailyCost] = Field(default_factory=list)
+    latency_by_day: list[DailyLatency] = Field(default_factory=list)

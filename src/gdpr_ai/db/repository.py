@@ -201,6 +201,35 @@ class AppRepository:
             rows = await cur.fetchall()
         return [_analysis_from_row(r) for r in rows]
 
+    async def list_analyses(
+        self,
+        *,
+        limit: int = 50,
+        mode: str | None = None,
+    ) -> list[AnalysisRow]:
+        """All analyses across projects, newest first, optionally filtered by pipeline mode."""
+        limit = max(1, min(limit, 500))
+        async with aiosqlite.connect(self._path) as conn:
+            await self._setup(conn)
+            if mode:
+                cur = await conn.execute(
+                    """
+                    SELECT * FROM analyses WHERE mode = ?
+                    ORDER BY created_at DESC LIMIT ?
+                    """,
+                    (mode, limit),
+                )
+            else:
+                cur = await conn.execute(
+                    """
+                    SELECT * FROM analyses
+                    ORDER BY created_at DESC LIMIT ?
+                    """,
+                    (limit,),
+                )
+            rows = await cur.fetchall()
+        return [_analysis_from_row(r) for r in rows]
+
     async def create_document(
         self,
         *,

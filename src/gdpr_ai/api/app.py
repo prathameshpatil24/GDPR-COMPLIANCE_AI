@@ -5,8 +5,9 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from gdpr_ai.api.routes import analyze, documents, projects
+from gdpr_ai.api.routes import analyze, documents, history, projects, stats
 from gdpr_ai.config import settings
 from gdpr_ai.db.database import close_app_db, init_app_db
 
@@ -26,9 +27,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(analyze.router, prefix="/api/v1", tags=["analysis"])
 app.include_router(documents.router, prefix="/api/v1", tags=["documents"])
 app.include_router(projects.router, prefix="/api/v1", tags=["projects"])
+app.include_router(history.router, prefix="/api/v1", tags=["history"])
+app.include_router(stats.router, prefix="/api/v1", tags=["stats"])
 
 
 @app.get("/health")

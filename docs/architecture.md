@@ -43,3 +43,7 @@ flowchart TB
 ```
 
 German statutes are translated once at index time; runtime retrieval and reasoning use English only.
+
+## Planned extensions (v4)
+
+Future work is documented in [v4-overview.md](v4-overview.md). Themes include: **Retrieval Gap Tracker** (log and rank ungrounded references, assist KB ingestion, measure gap rate), **multilingual retrieval** (German-first, bilingual index), **document upload**, and **website scanning**. These extend the same RAG architecture rather than replacing it.

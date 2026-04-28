@@ -8,7 +8,7 @@ Version 1 uses the terminal as the user interface. Users enter scenarios via `gd
 
 Version **3** introduces a **React dashboard** (this document uses **Next.js** as the reference stack) that exposes the same pipelines via a browser, targeting the broader user segments defined in [03 – Target Users](../phase-0-overview/03-target-users.md).
 
-**Scope:** **v2** ships **CLI + local REST API** only. The browser UI is **v3** and consumes the API in [11 – API Design](../phase-2-architecture/11-api-design.md). **v4** covers multilingual retrieval and UI; see the **Version roadmap** section in [Documentation README](../README.md).
+**Scope:** **v2** ships **CLI + local REST API** only. The browser UI is **v3** and consumes the API in [11 – API Design](../phase-2-architecture/11-api-design.md). **v4** adds the **Retrieval Gap Tracker** (dashboard/API), **multilingual** retrieval, **document upload**, and **website scanning**; see [v4-overview.md](../v4-overview.md) and the **Version roadmap** in [Documentation README](../README.md).
 
 ---
 
@@ -245,9 +245,11 @@ Thumbs-up / thumbs-down on each report stored with the query log. Optional free-
 
 The **v3** web client is **English-first**, matching runtime policy today. **v4** introduces:
 
+* **Retrieval gaps** UI — ranked ungrounded articles, charts, link to ingestion workflow (see [v4-gap-tracker.md](../v4-gap-tracker.md))
 * German-first **multilingual retrieval** and aligned UI/report language
-* Language switcher in header (product decision)
-* Report output in selected language where the pipeline supports it
+* **Document upload** and **website scan** input surfaces on Analyze
+* Language indicator / switcher in header (product decision)
+* Report output in selected language where the pipeline supports it (initially English-only responses per [v4-overview.md](../v4-overview.md))
 
 The codebase should use i18n-ready patterns from the start (react-intl or next-intl) in **v3**, to avoid refactoring when **v4** lands.
 
@@ -298,4 +300,4 @@ Implementation begins when the **v2** API and eval baselines are stable enough t
 
 ## v2 / v3 / v4 Note
 
-Frontend work remains **out of scope for v2**. **v2** delivers **CLI commands** and a **local REST API** only. **v3** adds the **React/Next.js** dashboard that consumes that API. **v4** adds multilingual retrieval and UI/report language strategy on top.
+Frontend work remains **out of scope for v2**. **v2** delivers **CLI commands** and a **local REST API** only. **v3** adds the **React** dashboard that consumes that API. **v4** adds **gap analytics**, multilingual retrieval, document/URL inputs, and UI/report language strategy on top ([v4-roadmap.md](../v4-roadmap.md)).

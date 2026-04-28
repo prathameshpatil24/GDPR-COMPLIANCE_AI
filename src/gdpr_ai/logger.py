@@ -212,19 +212,39 @@ def set_feedback(query_id: str, rating: str) -> bool:
 
 def get_stats() -> dict[str, float]:
     """Aggregate counters and averages for all logged queries."""
+    dash = get_stats_dashboard()
+    return {
+        "total_queries": float(dash["total_queries"]),
+        "avg_latency_ms": float(dash["avg_latency_ms"]),
+        "avg_cost_eur": float(dash["avg_cost_eur"]),
+        "total_cost_eur": float(dash["total_cost_eur"]),
+        "total_tokens": float(dash["total_tokens"]),
+        "avg_violations_per_query": float(dash["avg_violations_per_query"]),
+    }
+
+
+def get_stats_dashboard() -> dict[str, Any]:
+    """Aggregates plus daily series and distributions for the stats API / dashboard."""
     conn = _connect(settings.log_db_path)
     try:
         ensure_query_log_schema(conn)
-        total = conn.execute("SELECT COUNT(*) FROM query_logs").fetchone()[0]
+        total = int(conn.execute("SELECT COUNT(*) FROM query_logs").fetchone()[0] or 0)
+        empty: dict[str, Any] = {
+            "total_queries": 0,
+            "avg_latency_ms": 0.0,
+            "avg_cost_eur": 0.0,
+            "total_cost_eur": 0.0,
+            "total_tokens": 0.0,
+            "avg_violations_per_query": 0.0,
+            "queries_by_day": [],
+            "severity_distribution": {},
+            "mode_distribution": {},
+            "cost_by_day": [],
+            "latency_by_day": [],
+        }
         if not total:
-            return {
-                "total_queries": 0.0,
-                "avg_latency_ms": 0.0,
-                "avg_cost_eur": 0.0,
-                "total_cost_eur": 0.0,
-                "total_tokens": 0.0,
-                "avg_violations_per_query": 0.0,
-            }
+            return empty
+
         row = conn.execute(
             """
             SELECT AVG(latency_total_ms), AVG(estimated_cost_eur), SUM(estimated_cost_eur),
@@ -232,13 +252,90 @@ def get_stats() -> dict[str, float]:
             FROM query_logs
             """
         ).fetchone()
-        return {
-            "total_queries": float(total),
+        out: dict[str, Any] = {
+            "total_queries": total,
             "avg_latency_ms": float(row[0] or 0.0),
             "avg_cost_eur": float(row[1] or 0.0),
             "total_cost_eur": float(row[2] or 0.0),
             "total_tokens": float(row[3] or 0.0),
             "avg_violations_per_query": float(row[4] or 0.0),
+            "queries_by_day": [],
+            "severity_distribution": {},
+            "mode_distribution": {},
+            "cost_by_day": [],
+            "latency_by_day": [],
         }
+
+        cur = conn.execute(
+            """
+            SELECT date(timestamp) AS d, COUNT(*) AS c
+            FROM query_logs
+            GROUP BY date(timestamp)
+            ORDER BY d ASC
+            """
+        )
+        out["queries_by_day"] = [{"date": str(r[0]), "count": int(r[1])} for r in cur.fetchall()]
+
+        cur = conn.execute(
+            """
+            SELECT
+              CASE
+                WHEN severity IS NULL OR trim(severity) = '' THEN 'unknown'
+                ELSE lower(trim(severity))
+              END AS sev,
+              COUNT(*) AS n
+            FROM query_logs
+            GROUP BY
+              CASE
+                WHEN severity IS NULL OR trim(severity) = '' THEN 'unknown'
+                ELSE lower(trim(severity))
+              END
+            """
+        )
+        out["severity_distribution"] = {str(r[0]): int(r[1]) for r in cur.fetchall()}
+
+        cur = conn.execute(
+            """
+            SELECT
+              CASE
+                WHEN analysis_mode IS NULL OR trim(analysis_mode) = '' THEN 'unknown'
+                ELSE trim(analysis_mode)
+              END AS m,
+              COUNT(*) AS n
+            FROM query_logs
+            GROUP BY
+              CASE
+                WHEN analysis_mode IS NULL OR trim(analysis_mode) = '' THEN 'unknown'
+                ELSE trim(analysis_mode)
+              END
+            """
+        )
+        out["mode_distribution"] = {str(r[0]): int(r[1]) for r in cur.fetchall()}
+
+        cur = conn.execute(
+            """
+            SELECT date(timestamp) AS d, SUM(estimated_cost_eur) AS s
+            FROM query_logs
+            GROUP BY date(timestamp)
+            ORDER BY d ASC
+            """
+        )
+        out["cost_by_day"] = [
+            {"date": str(r[0]), "cost_eur": float(r[1] or 0.0)} for r in cur.fetchall()
+        ]
+
+        cur = conn.execute(
+            """
+            SELECT date(timestamp) AS d, AVG(latency_total_ms) AS a
+            FROM query_logs
+            GROUP BY date(timestamp)
+            ORDER BY d ASC
+            """
+        )
+        out["latency_by_day"] = [
+            {"date": str(r[0]), "avg_latency_ms": float(r[1] or 0.0)} for r in cur.fetchall()
+        ]
+
+        return out
     finally:
         conn.close()

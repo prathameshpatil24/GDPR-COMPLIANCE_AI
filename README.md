@@ -126,6 +126,35 @@ uv run gdpr-check history     # recent analysis runs
 
 ---
 
+## Frontend (v3)
+
+The web UI provides a visual interface for both analysis modes.
+
+### Running locally
+
+Start the backend and frontend:
+
+```bash
+# Terminal 1: Backend
+uv run gdpr-check serve
+
+# Terminal 2: Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`
+
+### Pages
+
+- **Analyze** — run violation analysis or compliance assessment with live results
+- **History** — browse, filter, and search past analyses
+- **Dashboard** — usage stats, cost tracking, severity distribution charts
+- **Settings** — theme toggle, connection status, about info
+
+---
+
 ## API Usage
 
 Start the server:

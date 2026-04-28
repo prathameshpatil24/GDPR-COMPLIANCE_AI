@@ -58,7 +58,7 @@ All user-facing surfaces (input, output, CLI) use English only in v1.
 
 * Scenarios are accepted only in English
 * Reports are generated only in English
-* Multilingual UI is deferred to **v4** (German-first; see [03 – Target Users](../phase-0-overview/03-target-users.md))
+* Multilingual UI is deferred to **v4** (German-first; see [03 – Target Users](../phase-0-overview/03-target-users.md) and [v4-overview.md](../v4-overview.md); **Retrieval Gap Tracker** is v4 priority 1)
 
 ### C-06 – Text-Only Input
 
@@ -202,7 +202,7 @@ User scenarios describe fact patterns with enough detail for legal analysis.
 Users of v1 accept English output even in German contexts.
 
 * Evidence: most EU privacy professionals work in English at least partially
-* **v4** will introduce German-first multilingual UI and retrieval (see product roadmap)
+* **v4** will introduce a **Retrieval Gap Tracker**, German-first multilingual UI and retrieval, and new input modes — see [v4-overview.md](../v4-overview.md)
 
 ### A-08 – Local Storage Capacity
 

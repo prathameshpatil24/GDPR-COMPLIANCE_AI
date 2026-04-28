@@ -171,10 +171,17 @@ Browser-based product surface on top of the v2 API:
 * **PDF export** and **in-browser** rendered reports
 * **Multi-turn** clarifying flows where the product design needs them
 
-### 4.4 Version 4 – Multilingual, Ingestion, and Public Product (planned)
+### 4.4 Version 4 – Gap Tracker, Multilingual Retrieval, New Inputs, and Public Product (planned)
 
-* **Multilingual retrieval** (German-first) and matching UI/report language strategy
-* **Document upload** (e.g. privacy policy review) and **website scanning**
+Priority order (see [V4 Feature Overview](../v4-overview.md)):
+
+1. **Retrieval Gap Tracker** — automated logging and ranking of ungrounded article references (from violation `unsupported_notes` and compliance `insufficient_info` findings), CLI/API visibility, optional semi-automated ingestion, and **gap-rate** metrics so accuracy improves **without** manual gap spreadsheets.
+2. **Multilingual retrieval** (German-first): bilingual indexing and cross-lingual retrieval; **response language English** initially; UI language indicator.
+3. **Document upload** — privacy policies, DPAs, consent forms, and related artefacts as first-class inputs (PDF/DOCX/TXT).
+4. **Website scanning** — URL in; privacy/cookie signals extracted; compliance assessment on scraped text (with rate limits).
+
+Also still in scope for v4 where previously planned:
+
 * **Knowledge base** refresh cadence suited to a hosted service
 * Formal **terms of service** and **privacy policy**
 * **Optional commercial licensing**, subject to CC BY-NC-SA constraints on GDPRhub-derived content
@@ -226,8 +233,9 @@ A **web UI** lets users type scenarios or system descriptions into a text area, 
 
 ### 6.4 Future Interaction (v4)
 
-* **Multilingual input** (German-first) aligned with retrieval and UI language strategy
-* **Document upload** for privacy-policy or similar review workflows
+* **Gaps dashboard** — see which articles most often lack KB coverage; trigger or plan ingestion from ranked gaps
+* **Multilingual input** (German-first) aligned with retrieval; **English** structured output initially
+* **Document upload** for privacy-policy, DPA, consent, and related review workflows
 * **Website scanning** as an input source (subject to technical and legal guardrails in requirements)
 
 ---

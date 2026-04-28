@@ -260,7 +260,7 @@ Some functional requirements rely on non-functional guarantees. These are listed
 
 GDPR AI's functional requirements cover input handling, pipeline processing, structured output, knowledge base completeness, evaluation, observability, and CLI interaction. Every requirement has a verifiable acceptance criterion and a clear owner in the system architecture.
 
-The requirements are intentionally scoped for v1 simplicity — single-shot scenario analysis with a CLI interface — with explicit deferral of **multi-turn product flows** to **v3** (web) and **document upload / website scanning** to **v4** (see [03 – Target Users](../phase-0-overview/03-target-users.md)).
+The requirements are intentionally scoped for v1 simplicity — single-shot scenario analysis with a CLI interface — with explicit deferral of **multi-turn product flows** to **v3** (web) and **retrieval gap automation**, **document upload**, and **website scanning** to **v4** (see [03 – Target Users](../phase-0-overview/03-target-users.md) and [v4-overview.md](../v4-overview.md)).
 
 ---
 

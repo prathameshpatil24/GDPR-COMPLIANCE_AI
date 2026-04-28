@@ -22,7 +22,7 @@ Options:
 
 ## Decision
 
-**English-only runtime for v1–v3.** German-first multilingual retrieval and UI are **v4** scope (see [Documentation README](../README.md) version roadmap).
+**English-only runtime for v1–v3.** German-first multilingual retrieval and UI are **v4** scope (see [Documentation README](../README.md) and [v4-overview.md](../v4-overview.md)). **v4** also prioritises a **Retrieval Gap Tracker** (KB expansion loop); that does not change the English-only **response** policy until multilingual work ships.
 
 ---
 
@@ -83,7 +83,7 @@ A monolingual v1 ships weeks sooner than a bilingual one. Shipping v1 unlocks re
 
 * **English comprehension**: EU compliance professionals typically read English
 * **Translation nuance**: translations spot-checked against originals for legal terms; original German retained in metadata
-* **Accessibility**: **v4** will add German-first multilingual UI and retrieval (see product roadmap)
+* **Accessibility**: **v4** will add German-first multilingual UI and retrieval, plus **retrieval gap** visibility to improve grounding over time (see [v4-overview.md](../v4-overview.md))
 
 ---
 
@@ -111,4 +111,4 @@ Considered. bge-m3 is designed for cross-lingual retrieval, and this path remain
 
 * Knowledge base built with German sources translated to English (see ADR-004)
 * CLI accepts and produces only English
-* **v4** roadmap includes multilingual UI and retrieval (German-first) as a first-class feature
+* **v4** roadmap includes **Retrieval Gap Tracker** (priority 1), then multilingual UI and retrieval (German-first), document upload, and website scanning — see [v4-roadmap.md](../v4-roadmap.md)

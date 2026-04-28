@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes gdpr-ripple-expand {
+    from {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0.45;
+    }
+    to {
+      transform: translate(-50%, -50%) scale(14);
+      opacity: 0;
+    }
+  }
+
+  .gdpr-ripple-dot {
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: gdpr-ripple-expand 0.55s ease-out forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
