@@ -27,7 +27,7 @@ Schema includes users (local identity), projects, analyses (with mode and JSON r
 * **Zero external infrastructure** — file-based, ships with Python ecosystem support.
 * **Appropriate scale** — hundreds to thousands of projects, not millions of tenants.
 * **Backup and erase** — single file is easy to copy, move, or delete for privacy.
-* **Straightforward migration path** — if v3 introduces hosted multi-user, schemas can move to PostgreSQL with ORM or ETL.
+* **Straightforward migration path** — if **v3+** introduces hosted multi-user, schemas can move to PostgreSQL with ORM or ETL.
 
 ---
 

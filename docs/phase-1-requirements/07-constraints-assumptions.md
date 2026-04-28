@@ -58,7 +58,7 @@ All user-facing surfaces (input, output, CLI) use English only in v1.
 
 * Scenarios are accepted only in English
 * Reports are generated only in English
-* Multilingual UI is deferred to v2
+* Multilingual UI is deferred to **v4** (German-first; see [03 – Target Users](../phase-0-overview/03-target-users.md))
 
 ### C-06 – Text-Only Input
 
@@ -73,7 +73,7 @@ The system accepts only free-text scenarios in v1.
 Each query is independent. No conversation memory in v1.
 
 * Follow-up questions must re-state the full scenario
-* Multi-turn reasoning is deferred to v2
+* Multi-turn reasoning in a product UI is deferred to **v3** (web); deeper multilingual flows align with **v4**
 
 ### C-08 – Local Execution
 
@@ -188,7 +188,7 @@ Claude Sonnet can reliably reason over 10-15 retrieved chunks and produce ground
 
 Users of v1 are comfortable with a command-line interface and can edit `.env` files.
 
-* Non-technical users are target for v2 (with web UI)
+* Non-technical users are target for **v3** (web UI)
 
 ### A-06 – Scenarios Describe Real or Hypothetical Situations
 
@@ -202,7 +202,7 @@ User scenarios describe fact patterns with enough detail for legal analysis.
 Users of v1 accept English output even in German contexts.
 
 * Evidence: most EU privacy professionals work in English at least partially
-* v2 will offer German UI as a premium experience
+* **v4** will introduce German-first multilingual UI and retrieval (see product roadmap)
 
 ### A-08 – Local Storage Capacity
 
@@ -236,7 +236,7 @@ If a key assumption is invalidated, the following actions apply:
 | A-01 Source stability | Scraper fails on a source | Update parser; verify other scrapers still work |
 | A-03 Embedding quality | Gold-set retrieval drops | Switch embedding model; re-index |
 | A-04 LLM reasoning | Gold-set precision drops | Simplify prompt; reduce chunk count; iterate |
-| A-05 User proficiency | Feedback indicates CLI is too technical | Accelerate v2 web UI |
+| A-05 User proficiency | Feedback indicates CLI is too technical | Accelerate **v3** web UI |
 | A-09 Internet availability | Frequent API failures | Add offline-only fallback mode |
 
 ---
@@ -285,4 +285,4 @@ The working assumptions are tractable — source stability, embedding quality, L
 
 **Local processing and LLM calls** — All indexing, retrieval, SQLite storage, and document assembly run **locally**. Content sent to the language-model API is limited to **scenario or system-description text** and **retrieved legal excerpts** — not bulk personal data from a production database.
 
-**SQLite sufficiency** — SQLite is the persistence layer for v2 local use. Migration to PostgreSQL (or similar) is **deferred to v3** if multi-user hosted deployment requires it.
+**SQLite sufficiency** — SQLite is the persistence layer for v2 local use. Migration to PostgreSQL (or similar) is **deferred to v3+** if multi-user **hosted** deployment requires it.

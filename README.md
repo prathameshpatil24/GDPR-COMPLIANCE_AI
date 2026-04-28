@@ -202,7 +202,20 @@ Every chunk carries `source`, `source_url`, and `license` metadata for traceabil
 - **English runtime** — German legal sources translated at index time
 - **Indexed law only** — if an article isn't in the knowledge base, you'll see "retrieval gap" notes instead of hallucinated citations
 - **ePrivacy gaps** — cookie/electronic marketing scenarios may be incomplete unless TTDSG chunks cover the pattern
-- **Latency** — complex assessments take 90–190s due to multi-stage LLM pipeline
+- **Latency** — full runs are typically **20–190s** depending on mode and complexity (multi-stage LLM pipeline)
+
+---
+
+## Product roadmap
+
+| Release | Focus |
+|---------|--------|
+| **v1** | Violation analysis CLI |
+| **v2** | Compliance assessment, local REST API, eval framework, SQLite persistence *(current)* |
+| **v3** | Web UI (React dashboard), auth, rate limits, feedback, PDF export |
+| **v4** | German-first multilingual retrieval, document upload, website scanning, ToS/privacy, optional commercial path |
+
+Details: [docs/README.md](docs/README.md) and [docs/phase-0-overview/03-target-users.md](docs/phase-0-overview/03-target-users.md).
 
 ---
 

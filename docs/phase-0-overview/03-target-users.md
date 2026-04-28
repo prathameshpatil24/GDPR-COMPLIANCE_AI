@@ -51,7 +51,7 @@ This document defines the user segments, their specific needs, how GDPR AI addre
 
 **How GDPR AI helps**
 
-* Seconds-per-query response time enables bulk triage
+* End-to-end runs take tens of seconds to a few minutes depending on scenario complexity, which still beats manual article lookup for bulk triage
 * Article-level output maps to the DPO's existing workflow
 * Enforcement case references support risk communication to management
 * Clear disclaimers ensure the DPO remains the decision-maker
@@ -149,24 +149,35 @@ The initial version is scoped for a single user: the project owner. This allows:
 * No need for terms of service, privacy policy, or legal review of the tool itself
 * Freedom to experiment with prompts, retrieval, and output formats
 
-### 4.2 Version 2 – Open Beta
+### 4.2 Version 2 – Compliance Engine, API, and Eval (shipped)
 
-After the pipeline is validated and cost characteristics are well understood, a small beta opening is planned:
+Version 2 is **not** the web UI; it is the **compliance assessment** track delivered alongside v1:
 
-* Adds a web UI alongside the CLI
-* Introduces basic authentication
-* Adds rate limiting per user
-* Includes a feedback capture mechanism
+* **Compliance pipeline** — **intake → map → assess → generate** (system description to data map, findings, and markdown documents)
+* **REST API** — FastAPI exposes violation analysis and compliance assessment on localhost, with async jobs where needed
+* **Eval framework** — unified gold scenarios, baselines, and harness for regression on both modes
+* **JSON hardening** — truncation-safe parsing and structured-output handling for long LLM responses
+* **Observability** — aggregated **stats**, per-run **history**, and query telemetry (cost, latency, tokens)
 
-### 4.3 Version 3 – Public Availability
+The CLI remains the primary interface for v2; projects and generated documents persist in SQLite.
 
-If v2 performs well against a broader gold test set and user feedback is positive:
+### 4.3 Version 3 – Web UI (planned)
 
-* Scales knowledge base refresh cadence
-* Adds multilingual retrieval (German-first)
-* Introduces document upload and website scanning
-* Formalises terms of service and privacy policy
-* Considers optional commercial licensing, subject to CC BY-NC-SA constraints on GDPRhub-derived content
+Browser-based product surface on top of the v2 API:
+
+* **React dashboard** (see [Frontend Design](../phase-3-execution/18-frontend-design.md); stack details may evolve)
+* Basic **authentication** and **rate limiting** per user
+* **Feedback capture** (e.g. thumbs up/down, optional comments) tied to runs
+* **PDF export** and **in-browser** rendered reports
+* **Multi-turn** clarifying flows where the product design needs them
+
+### 4.4 Version 4 – Multilingual, Ingestion, and Public Product (planned)
+
+* **Multilingual retrieval** (German-first) and matching UI/report language strategy
+* **Document upload** (e.g. privacy policy review) and **website scanning**
+* **Knowledge base** refresh cadence suited to a hosted service
+* Formal **terms of service** and **privacy policy**
+* **Optional commercial licensing**, subject to CC BY-NC-SA constraints on GDPRhub-derived content
 
 ---
 
@@ -209,9 +220,15 @@ The output is a structured report printed to the terminal.
 
 Users can inspect query logs in the local SQLite database and review retrieval chunks for debugging or learning.
 
-### 6.3 Future Interaction (v2)
+### 6.3 Future Interaction (v3)
 
-A web UI allows typing scenarios into a text area, receiving rendered reports, and exporting to PDF. Multi-turn conversations enable clarifying questions.
+A **web UI** lets users type scenarios or system descriptions into a text area, see **rendered reports** in the browser, and **export to PDF**. **Multi-turn** flows can support clarifying questions where product design requires them.
+
+### 6.4 Future Interaction (v4)
+
+* **Multilingual input** (German-first) aligned with retrieval and UI language strategy
+* **Document upload** for privacy-policy or similar review workflows
+* **Website scanning** as an input source (subject to technical and legal guardrails in requirements)
 
 ---
 
@@ -219,7 +236,7 @@ A web UI allows typing scenarios into a text area, receiving rendered reports, a
 
 ### 7.1 What Users Can Expect
 
-* Responses within 5 seconds for typical scenarios
+* **Latency** — Full pipeline runs are dominated by sequential LLM calls; observed end-to-end times are roughly **20–190 seconds** depending on scenario or system-description complexity, model routing, and hardware—not sub-second interactive chat. Retrieval itself remains fast; most time is reasoning and validation.
 * Accurate article citations grounded in the knowledge base
 * Clear disclaimers that the output is informational
 * Consistent report format across queries
@@ -230,8 +247,8 @@ A web UI allows typing scenarios into a text area, receiving rendered reports, a
 * Legally binding advice
 * 100% correctness on edge cases
 * Coverage of jurisdictions outside GDPR and German law
-* Analysis of uploaded documents or websites in v1
-* Multi-turn conversational memory in v1
+* Analysis of uploaded documents or websites before **v4**
+* Multi-turn conversational memory in the CLI for **v1**; richer multi-turn is planned for **v3** in the web UI
 
 ---
 

@@ -1,12 +1,12 @@
 # Phase 2.12 – Cloud Architecture and Deployment
 
-> **Status**: Deferred to v2. Version 1 of GDPR AI runs entirely on the user's local machine. This document plans the cloud architecture for when GDPR AI is hosted and serves external users.
+> **Status**: Deferred to **v3+**. Version 1 and the v2 API run on the user's local machine. This document plans the cloud architecture for when the **v3 web UI** is hosted and serves external users.
 
 ## 1. Overview
 
 Version 1 requires no hosting. The CLI runs locally, ChromaDB is embedded, and the only network call is to the Anthropic API.
 
-Version 2 introduces a hosted component — a FastAPI service exposing the `/v1/analyse` endpoint and a Next.js frontend. This document describes the planned cloud architecture, deployment model, and operational considerations.
+Version **3** introduces a hosted component — typically a FastAPI backend (already used locally in v2) plus a **React/Next.js** frontend for the dashboard. This document describes the planned cloud architecture, deployment model, and operational considerations.
 
 ---
 
@@ -19,7 +19,7 @@ Version 2 introduces a hosted component — a FastAPI service exposing the `/v1/
 * Simple operational footprint (one container, one volume, one database)
 * Room to scale to hundreds of queries per day without re-architecture
 
-### 2.2 Non-Goals for v2
+### 2.2 Non-Goals for initial hosted (v3)
 
 * Auto-scaling across multiple regions
 * High availability with hot failover
@@ -29,7 +29,7 @@ Version 2 introduces a hosted component — a FastAPI service exposing the `/v1/
 
 ## 3. Hosting Options Considered
 
-### 3.1 Hetzner Cloud (Recommended for v2)
+### 3.1 Hetzner Cloud (Recommended for v3 hosting)
 
 **Pros**
 
@@ -89,11 +89,11 @@ Version 2 introduces a hosted component — a FastAPI service exposing the `/v1/
 * Availability depends on home network
 * Not appropriate for external users
 
-Considered only if v2 is an internal demo.
+Considered only if the hosted stack is an internal demo.
 
 ---
 
-## 4. Recommended v2 Architecture
+## 4. Recommended Hosted Architecture (v3+)
 
 ### 4.1 Topology
 
@@ -140,7 +140,7 @@ Considered only if v2 is an internal demo.
 
 ---
 
-## 5. Deployment Pipeline (v2 Plan)
+## 5. Deployment Pipeline (v3+ Plan)
 
 ### 5.1 Continuous Integration
 
@@ -163,15 +163,15 @@ On merge to `main`:
 4. Runs `docker compose up -d` with new image
 5. Health check verifies service is responsive
 
-### 5.3 Zero-Downtime Strategy (v2)
+### 5.3 Zero-Downtime Strategy (v3+)
 
-For v2 simplicity, brief downtime (a few seconds) during deploys is acceptable. If zero-downtime becomes important, switch to blue-green via two compose stacks behind Cloudflare.
+For early hosted releases, brief downtime (a few seconds) during deploys is acceptable. If zero-downtime becomes important, switch to blue-green via two compose stacks behind Cloudflare.
 
 ---
 
 ## 6. Secret Management
 
-### 6.1 v2 Approach
+### 6.1 v3+ Approach
 
 * `ANTHROPIC_API_KEY` stored as a Docker Compose environment variable, loaded from a `.env` file on the server
 * `.env` is deployed via secure copy and never committed to Git
@@ -211,7 +211,7 @@ Expected Recovery Time Objective: 2 hours
 
 ---
 
-## 8. Monitoring and Alerting (v2)
+## 8. Monitoring and Alerting (v3+)
 
 ### 8.1 What to Monitor
 
@@ -232,7 +232,7 @@ Simple Grafana instance running alongside FastAPI, reading from Prometheus scrap
 
 ---
 
-## 9. Cost Model (v2 Estimates)
+## 9. Cost Model (Hosted / v3+ Estimates)
 
 ### 9.1 Fixed Monthly Costs
 
@@ -288,18 +288,18 @@ When GDPR AI becomes a hosted service, the service itself must comply with GDPR.
 * Data subject request process defined (access, deletion)
 * DPIA conducted for the service
 
-This is managed as a project task in the v2 roadmap.
+This is managed as a project task in the v3+ hosting roadmap.
 
 ---
 
 ## 12. Summary
 
-The v2 cloud architecture is deliberately modest: one VPS in an EU data centre, Docker Compose, Cloudflare in front, embedded data stores. This keeps fixed monthly costs in single-digit euros while supporting a small beta and the ability to scale to hundreds of daily queries without re-architecting.
+The hosted (v3+) cloud architecture is deliberately modest: one VPS in an EU data centre, Docker Compose, Cloudflare in front, embedded data stores. This keeps fixed monthly costs in single-digit euros while supporting a small beta and the ability to scale to hundreds of daily queries without re-architecting.
 
 More complex deployment topologies (multi-region, Kubernetes, managed services) are deferred until real usage justifies the additional operational overhead.
 
 ---
 
-## v2 Note
+## Scope note
 
-Remains deferred. v2 runs entirely locally. Cloud deployment is v3+ scope.
+Remains deferred. The **v2 API** runs entirely locally today. **Cloud deployment** is **v3+** scope, alongside the web dashboard.

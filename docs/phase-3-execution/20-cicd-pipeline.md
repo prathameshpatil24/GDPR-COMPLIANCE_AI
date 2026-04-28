@@ -1,12 +1,12 @@
 # Phase 3.20 – CI/CD Pipeline Design
 
-> **Status**: Deferred to v2. Version 1 is tested and deployed manually by the solo developer. This document plans the automated CI/CD pipeline for v2.
+> **Status**: Deferred to **v3+**. Local **v1** and **v2** development rely on manual test runs; this document plans automated CI/CD for **hosted** delivery alongside the web UI.
 
 ## 1. Overview
 
 Version 1 of GDPR AI runs on the developer's laptop and is "deployed" by running `git pull`. There is no automated testing or deployment.
 
-Version 2 introduces a hosted service, at which point automated CI/CD becomes valuable for quality assurance and faster iteration.
+Version **3+** introduces a hosted service, at which point automated CI/CD becomes valuable for quality assurance and faster iteration.
 
 ---
 
@@ -19,7 +19,7 @@ Version 2 introduces a hosted service, at which point automated CI/CD becomes va
 * Fast feedback for pull request authors (under 3 minutes typical)
 * Minimal cost (free tier where possible)
 
-### 2.2 Non-Goals for v2
+### 2.2 Non-Goals for initial CI/CD (v3+)
 
 * Blue-green deployments with zero downtime
 * Canary releases
@@ -250,7 +250,7 @@ On success: no notification (reduces noise).
 ### 7.2 Never in Secrets
 
 * Production `.env` contents (those live on the VPS)
-* Database credentials (none in v2 architecture)
+* Database credentials (none in local v1/v2 architecture; review again for hosted v3+)
 
 ---
 
@@ -298,7 +298,7 @@ The previous image remains in the registry for at least 30 days.
 
 ### 9.2 Automated Rollback (v3)
 
-For v2, rollback is manual. For v3, consider automated rollback when the post-deploy health check fails.
+For early **v3+** deployments, rollback remains manual. A later release may add automated rollback when post-deploy health checks fail.
 
 ---
 
@@ -343,12 +343,12 @@ One gold-set run: approximately 0.50 EUR. Daily: 15 EUR/month. Acceptable for a 
 
 ## 12. Summary
 
-The v2 CI/CD pipeline uses GitHub Actions for PR validation and main-branch deployment. Fast, free, and simple. Dependency caching keeps PR feedback under 3 minutes. Gitleaks prevents secrets from sneaking in. Deployment is a straightforward SSH-based Docker Compose update to a single Hetzner VPS.
+The **v3+** CI/CD pipeline uses GitHub Actions for PR validation and main-branch deployment. Fast, free, and simple. Dependency caching keeps PR feedback under 3 minutes. Gitleaks prevents secrets from sneaking in. Deployment is a straightforward SSH-based Docker Compose update to a single Hetzner VPS.
 
 More sophisticated delivery patterns (blue-green, canary, multi-region) are deferred until the project's scale justifies the complexity.
 
 ---
 
-## v2 Note
+## Scope note
 
-Remains deferred. Local development relies on **manual** test runs (`pytest`, evaluation harness). Full **CI/CD** automation is **v3+** scope, alongside any hosted deployment.
+Remains deferred. Local **v2** development relies on **manual** test runs (`pytest`, evaluation harness). Full **CI/CD** automation is **v3+** scope, alongside any hosted deployment.

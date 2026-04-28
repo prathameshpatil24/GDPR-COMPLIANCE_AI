@@ -342,7 +342,7 @@ No caching in v1. v2 may cache identical scenarios to save cost.
 
 ### 9.4 Background Indexing
 
-v1 rebuilds the knowledge base manually. v2 may run scheduled rebuilds via cron or a worker.
+v1 rebuilds the knowledge base manually. **v4** (hosted product) targets scheduled knowledge-base refresh; until then, rebuilds remain operator-driven scripts.
 
 ---
 

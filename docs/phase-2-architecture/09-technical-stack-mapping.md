@@ -95,7 +95,7 @@ Every choice is evaluated against the project's core priorities: accuracy, low c
 * Sufficient performance for 10K+ chunks
 * Simple Python API
 * Free, open-source, active development
-* Easy migration path to hosted Chroma or Qdrant in v2
+* Easy migration path to hosted Chroma or Qdrant when the product is hosted (**v3+**)
 
 **Alternatives considered**:
 
@@ -113,7 +113,7 @@ Every choice is evaluated against the project's core priorities: accuracy, low c
 * Strong semantic quality for legal English
 * Runs locally, no API costs for embedding
 * Reasonable model size (~2GB) for a laptop
-* Supports multilingual retrieval for future v2 expansion
+* Supports multilingual retrieval when **v4** enables German-first (and further) retrieval
 * MIT licensed
 
 **Alternatives considered**:
@@ -186,7 +186,7 @@ Every choice is evaluated against the project's core priorities: accuracy, low c
 * Industry-standard for Python data validation
 * v2 is significantly faster than v1
 * Native JSON schema generation
-* Tight integration with FastAPI (v2 web layer)
+* Tight integration with FastAPI (HTTP API shipped in **v2**)
 * Strict validation enforces data contracts throughout pipeline
 
 **Alternatives considered**:
@@ -376,33 +376,33 @@ Every choice is evaluated against the project's core priorities: accuracy, low c
 
 ---
 
-## 11. Deferred-to-v2 Stack Decisions
+## 11. Planned Stack Extensions (post–v1)
 
-These choices are documented here for visibility but not implemented in v1:
+These choices are documented for visibility. **FastAPI** and the **v2 API** are **shipped**; remaining items align with **v3** (web/hosting) or **v4+** (retrieval upgrades).
 
 ### 11.1 Web Framework: FastAPI
 
-For v2 HTTP API. Chosen for tight Pydantic integration and async performance.
+**Shipped in v2** — local REST API with tight Pydantic integration and async performance.
 
-### 11.2 Frontend: Next.js + Tailwind
+### 11.2 Frontend: Next.js + Tailwind (or equivalent React stack)
 
-For v2 web UI. Chosen for React ecosystem and fast iteration.
+For **v3 web UI**. Chosen for React ecosystem and fast iteration; exact framework may follow [18 – Frontend Design](../phase-3-execution/18-frontend-design.md).
 
 ### 11.3 Container Orchestration: Docker + Compose
 
-For v2 self-hosted deployment. Minimal overhead, wide familiarity.
+For **v3+** self-hosted or cloud deployment. Minimal overhead, wide familiarity.
 
 ### 11.4 Hosting: Hetzner VPS or AWS Fargate
 
-For v2. Hetzner chosen as default for EU data residency and low cost.
+For **v3+** when the dashboard is served to users. Hetzner remains the default EU-residency reference.
 
 ### 11.5 CI/CD: GitHub Actions
 
-For v2 automated testing and deployment.
+For **v3+** automated testing and deployment (see [20 – CI/CD Pipeline](../phase-3-execution/20-cicd-pipeline.md)).
 
 ### 11.6 Re-Ranker: bge-reranker-v2-m3
 
-For v2 retrieval quality improvement.
+Optional retrieval quality improvement; **v4+** unless pulled forward.
 
 ---
 
@@ -410,7 +410,7 @@ For v2 retrieval quality improvement.
 
 The v1 stack is deliberately narrow: Python, Anthropic, ChromaDB, local embeddings, SQLite, a CLI, and strong dev tooling. Every component is chosen for either operational simplicity or best-in-class quality in its specific role. Costs are minimised by using local inference where possible and paying only for LLM reasoning calls.
 
-The architecture is ready to absorb v2 extensions (FastAPI, web UI, re-ranking, hosting) without rearchitecting the core pipeline.
+The architecture absorbed **v2** extensions (FastAPI, compliance pipeline, persistence) without rearchitecting the core violation pipeline. **v3+** can add the web UI, hosting, and optional re-ranking on the same boundaries.
 
 ---
 

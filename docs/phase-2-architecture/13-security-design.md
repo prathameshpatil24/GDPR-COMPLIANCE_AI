@@ -4,7 +4,7 @@
 
 GDPR AI handles sensitive input — scenarios that may describe real-world data protection incidents — and integrates with a paid external API. Security is a first-class concern across all design phases.
 
-This document defines the security posture for v1 (local CLI) and sets direction for v2 (hosted service).
+This document defines the security posture for **v1** (local CLI) and **v2** (local API + SQLite) and sets direction for **v3+** (hosted web product).
 
 ---
 
@@ -135,9 +135,9 @@ Reports summarise scenarios but do not expand or elaborate on personal details p
 * Query logs: stored in local SQLite, unencrypted on disk
 * `.env`: unencrypted but permission-restricted
 
-### 7.2 v2 Hosted Considerations
+### 7.2 v3+ Hosted Considerations
 
-When GDPR AI becomes a hosted service, encryption at rest becomes relevant:
+When GDPR AI becomes a **hosted** service (**v3+**), encryption at rest becomes relevant:
 
 * Full-disk encryption on VPS (LUKS on Linux)
 * SQLite file protected by disk encryption
@@ -151,7 +151,7 @@ When GDPR AI becomes a hosted service, encryption at rest becomes relevant:
 
 All network traffic is to `api.anthropic.com` over TLS. Python's `httpx` and the Anthropic SDK enforce TLS by default.
 
-### 8.2 v2
+### 8.2 v3+ (hosted)
 
 All external endpoints served via HTTPS (TLS 1.2+). Cloudflare enforces HTTPS at the edge. Internal container-to-container traffic stays within the Docker bridge network.
 
@@ -276,7 +276,8 @@ Users can inspect query logs at any time via SQLite or future dashboard. Every r
 ### 14.1 GDPR Compliance of the Tool Itself
 
 * v1 (local CLI): minimal compliance burden; user processes their own data on their own machine
-* v2 (hosted): full GDPR compliance required — privacy policy, DPIA, lawful basis for processing, data subject rights
+* v2 (local API): same trust boundary as v1 for core processing; still no public multi-tenant service
+* **v3+ (hosted web product):** full GDPR compliance required for the service operator — privacy policy, DPIA, lawful basis for processing, data subject rights
 
 ### 14.2 License Compliance
 
@@ -294,7 +295,7 @@ Users can inspect query logs at any time via SQLite or future dashboard. Every r
 * Verify no API keys in tracked files: `grep -r 'sk-ant-' .`
 * Verify scenarios cannot escape to shell: manual test with adversarial inputs
 
-### 15.2 v2 Automated Checks
+### 15.2 v3+ Automated Checks (when CI/CD is active)
 
 * Pre-commit hook scanning for secret patterns
 * CI dependency vulnerability scanning
@@ -307,7 +308,7 @@ Users can inspect query logs at any time via SQLite or future dashboard. Every r
 
 GDPR AI's security posture is proportionate to its scope. Version 1 is a local CLI processing public legal knowledge and user-provided scenarios, with only the Anthropic API as an external dependency. Core protections — key management, input validation, hallucination guards, local-only storage — are in place from day one.
 
-Version 2 introduces hosting and user accounts, which expand the threat surface. The v2 security plan includes encryption at rest, rate limiting, automated dependency scanning, and compliance with GDPR for the hosted service itself.
+Version **3+** introduces hosting and user accounts, which expand the threat surface. The hosted security plan includes encryption at rest, rate limiting, automated dependency scanning, and compliance with GDPR for the service itself.
 
 ---
 
