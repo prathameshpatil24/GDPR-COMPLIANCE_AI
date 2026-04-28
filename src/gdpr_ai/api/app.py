@@ -5,6 +5,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from gdpr_ai.api.routes import analyze, documents, projects
 from gdpr_ai.config import settings
@@ -24,6 +25,14 @@ app = FastAPI(
     description="GDPR compliance analysis and assessment tool",
     version="2.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(analyze.router, prefix="/api/v1", tags=["analysis"])
