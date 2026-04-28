@@ -11,7 +11,7 @@ Yes, but your modifications must also be licensed under AGPL-3.0.
 ## Can I use this in my company's product or SaaS?
 
 Only if you release your entire product's source code under AGPL-3.0.
-For closed-source commercial use, contact prathamesh.patil2468@gmail.com for a commercial license.
+For closed-source commercial use, contact prathamesh.p9594@gmail.com for a commercial license.
 
 ## Can I use this for academic research?
 
