@@ -1,4 +1,5 @@
 """Tests for compliance intake and article mapping."""
+
 from __future__ import annotations
 
 import json

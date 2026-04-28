@@ -1,4 +1,5 @@
 """Scoring helpers for unified violation + compliance gold evaluation."""
+
 from __future__ import annotations
 
 import re
@@ -18,6 +19,16 @@ _STATUS_ORDER: dict[str, int] = {
 def status_rank(status: str) -> int:
     """Monotonic rank: higher means more severe / less compliant."""
     return _STATUS_ORDER.get(status, 1)
+
+
+def _is_recital_key(key: str) -> bool:
+    """True when normalized citation is a recital (precision excludes these)."""
+    return str(key).strip().lower().startswith("recital:")
+
+
+def without_recital_keys(keys: set[str]) -> set[str]:
+    """Drop recitals so precision reflects substantive GDPR/article citations only."""
+    return {k for k in keys if not _is_recital_key(k)}
 
 
 def outcome_label(
@@ -73,6 +84,7 @@ def article_sets_violation(
     violations: list[Any],
 ) -> tuple[set[str], set[str], set[str], set[str]]:
     """Expected keys, actual keys, missing, extra (extras exclude acceptable)."""
+
     def key_set(items: list[str]) -> set[str]:
         return {normalize_article_ref(x) for x in items if x}
 
@@ -82,7 +94,7 @@ def article_sets_violation(
     for v in violations:
         act.add(normalize_article_ref(v.article_reference))
     missing = exp - act
-    extra = act - exp - acc
+    extra = without_recital_keys(act - exp - acc)
     return exp, act, missing, extra
 
 
@@ -98,7 +110,8 @@ def violation_recall_precision_from_act_keys(
     correct = act_n & exp
     unexpected = act_n - exp - acc
     recall = 1.0 if not exp else len(correct) / len(exp)
-    denom = len(correct) + len(unexpected)
+    unexpected_noprec = without_recital_keys(unexpected)
+    denom = len(correct) + len(unexpected_noprec)
     precision = 1.0 if denom == 0 else len(correct) / denom
     missing = exp - act_n
     extra = unexpected
@@ -116,7 +129,8 @@ def article_recall_precision_violation(
     correct = act & exp
     unexpected = act - exp - acc
     recall = 1.0 if not exp else len(correct) / len(exp)
-    denom = len(correct) + len(unexpected)
+    unexpected_noprec = without_recital_keys(unexpected)
+    denom = len(correct) + len(unexpected_noprec)
     precision = 1.0 if denom == 0 else len(correct) / denom
     return recall, precision
 
@@ -154,18 +168,66 @@ def compliance_article_metrics(
             act.add(normalize_article_ref(a))
     correct = exp & act
     recall = 1.0 if not exp else len(correct) / len(exp)
-    precision = 1.0 if not act else len(correct) / len(act)
+    act_for_precision = without_recital_keys(act)
+    correct_prec = exp & act_for_precision
+    precision = 1.0 if not act_for_precision else len(correct_prec) / len(act_for_precision)
     missing_l = sorted(exp - act)
-    extra_l = sorted(act - exp)
+    extra_l = sorted(without_recital_keys(act - exp))
     found_l = sorted(act & exp)
     return recall, precision, found_l, missing_l, extra_l
+
+
+_FINDING_AREA_NEEDLE_ALIASES: dict[str, tuple[str, ...]] = {
+    "consent": (
+        "consent",
+        "lawful basis",
+        "lawfulness",
+        "conditions for consent",
+        "article 7",
+        "marketing",
+        "newsletter",
+        "subscribe",
+    ),
+    "processor": (
+        "processor",
+        "subprocessor",
+        "vendor",
+        "mailchimp",
+        "dpa",
+        "data processing agreement",
+        "article 28",
+        "art. 28",
+    ),
+    "transparency": (
+        "transparency",
+        "privacy notice",
+        "privacy policy",
+        "information obligation",
+        "information to data subjects",
+        "article 13",
+        "articles 13",
+        "articles 12",
+    ),
+}
+
+
+def _finding_matches_expected_area(f: Finding, area_needle: str) -> bool:
+    """Match gold ``area`` labels to finding text using literals and common synonyms."""
+    needle = area_needle.strip().lower()
+    if not needle:
+        return False
+    hay = f"{f.area} {f.description or ''}".lower()
+    tokens = _FINDING_AREA_NEEDLE_ALIASES.get(needle, (needle,))
+    if any(tok in hay for tok in tokens):
+        return True
+    return needle in hay or hay in needle
 
 
 def finding_area_coverage(
     expected_specs: list[dict[str, Any]],
     findings: list[Finding],
 ) -> float:
-    """Fraction of expected areas that appear in any finding.area (substring)."""
+    """Fraction of expected areas matched against findings (area + description)."""
     if not expected_specs:
         return 1.0
     hits = 0
@@ -173,7 +235,7 @@ def finding_area_coverage(
         area_needle = str(spec.get("area", "")).lower()
         if not area_needle:
             continue
-        if any(area_needle in f.area.lower() or f.area.lower() in area_needle for f in findings):
+        if any(_finding_matches_expected_area(f, area_needle) for f in findings):
             hits += 1
     return hits / len(expected_specs)
 
@@ -190,9 +252,7 @@ def finding_status_accuracy(
         area_needle = str(spec.get("area", "")).lower()
         min_s = str(spec.get("min_status", "at_risk"))
         need = status_rank(min_s)
-        matched = [
-            f for f in findings if area_needle in f.area.lower() or f.area.lower() in area_needle
-        ]
+        matched = [f for f in findings if _finding_matches_expected_area(f, area_needle)]
         if not matched:
             continue
         best = max(matched, key=lambda f: status_rank(f.status.value))

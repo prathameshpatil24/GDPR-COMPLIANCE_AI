@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Unified gold evaluation: violation_analysis (v1) and compliance_assessment (v2)."""
+
 from __future__ import annotations
 
 import argparse
@@ -45,6 +46,7 @@ from eval_scoring import (  # noqa: E402
     outcome_label,
     violation_hallucination_count,
     violation_recall_precision_from_act_keys,
+    without_recital_keys,
 )
 
 console = Console()
@@ -377,7 +379,8 @@ def _run_replay(replay_path: Path, rows: list[dict[str, Any]]) -> int:
         acc = list(row.get("acceptable_extras") or [])
         rec, prec, exp_s, act_s, _ = violation_recall_precision_from_act_keys(exp, acc, act_keys)
         missing = exp_s - act_s
-        extra = act_s - exp_s - {normalize_article_ref(x) for x in acc}
+        acc_norm = {normalize_article_ref(x) for x in acc}
+        extra = sorted(without_recital_keys(act_s - exp_s - acc_norm))
         law_r = law_recall_from_keys(list(row.get("expected_laws") or []), act_keys)
         st = outcome_label(article_recall=rec, article_precision=prec, finding_coverage=None)
         results.append(

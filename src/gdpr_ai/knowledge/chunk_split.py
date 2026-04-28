@@ -1,4 +1,5 @@
 """Token-aware text chunking for embedding (BGE tokenizer)."""
+
 from __future__ import annotations
 
 from functools import lru_cache

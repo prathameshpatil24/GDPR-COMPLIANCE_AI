@@ -1,4 +1,5 @@
 """Violation and compliance analysis endpoints."""
+
 from __future__ import annotations
 
 import json

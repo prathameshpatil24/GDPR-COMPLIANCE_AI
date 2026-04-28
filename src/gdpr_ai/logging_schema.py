@@ -1,4 +1,5 @@
 """SQLite DDL and incremental migrations for the query log table."""
+
 from __future__ import annotations
 
 import sqlite3

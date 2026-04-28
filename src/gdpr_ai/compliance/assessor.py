@@ -1,4 +1,5 @@
 """LLM-backed compliance assessment with citation filtering."""
+
 from __future__ import annotations
 
 import json
@@ -7,7 +8,12 @@ from typing import Any
 
 from gdpr_ai.compliance.schemas import ComplianceAssessment, DataMap, Finding
 from gdpr_ai.config import settings
-from gdpr_ai.llm.client import LLMResult, complete_text, extract_json_object
+from gdpr_ai.llm.client import (
+    LLMResult,
+    complete_text,
+    extract_json_object_with_repair,
+    is_truncated_json_error,
+)
 from gdpr_ai.models import RetrievedChunk
 from gdpr_ai.prompts import render_prompt
 
@@ -81,30 +87,50 @@ async def assess_compliance(
         data_map_json=data_map.model_dump_json(),
         chunks_json=_chunks_json(chunks),
     )
+    initial_cap = min(settings.max_tokens, 16384)
     res = await complete_text(
         model=settings.model_reasoning,
         system="You output only JSON. Obey citation rules in the user prompt.",
         user=user,
-        max_tokens=settings.max_tokens,
+        max_tokens=initial_cap,
         temperature=0.0,
     )
     data: dict[str, Any]
     try:
-        data = extract_json_object(res.text)
+        data, _ = extract_json_object_with_repair(res.text)
     except (json.JSONDecodeError, ValueError) as exc:
-        logger.warning("Assessment JSON parse failed, retrying once: %s", exc)
-        repair_user = (
-            user
-            + "\n\nYour previous answer was not valid JSON. Reply again with ONLY one JSON object."
+        logger.warning(
+            "Assessment JSON parse failed after repair attempt, retrying LLM once: %s",
+            exc,
         )
+        bump = 4096 if is_truncated_json_error(exc) else 0
+        retry_cap = min(initial_cap + bump, 32768)
+        extra_user = (
+            (
+                "\n\nYour previous reply was truncated or invalid JSON. "
+                "Reply with ONLY one JSON object. "
+                "Keep description and remediation text concise while preserving "
+                "all material findings."
+            )
+            if bump
+            else (
+                "\n\nYour previous answer was not valid JSON. "
+                "Reply again with ONLY one JSON object."
+            )
+        )
+        repair_user = user + extra_user
         res = await complete_text(
             model=settings.model_reasoning,
             system="You output only JSON.",
             user=repair_user,
-            max_tokens=min(settings.max_tokens, 8192),
+            max_tokens=retry_cap,
             temperature=0.0,
         )
-        data = extract_json_object(res.text)
+        try:
+            data, _ = extract_json_object_with_repair(res.text)
+        except (json.JSONDecodeError, ValueError) as exc2:
+            logger.error("Assessment JSON parse failed after retry: %s", exc2)
+            raise exc2 from exc
 
     data["data_map"] = data_map.model_dump()
     assessment = ComplianceAssessment.model_validate(data)

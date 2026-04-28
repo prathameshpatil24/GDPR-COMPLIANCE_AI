@@ -1,4 +1,5 @@
 """Tests for v2 knowledge ingestion helpers and multi-collection retrieval."""
+
 from __future__ import annotations
 
 from pathlib import Path

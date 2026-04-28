@@ -1,4 +1,5 @@
 """Tests for unified gold eval harness (load, filter, validation, scoring)."""
+
 from __future__ import annotations
 
 import json

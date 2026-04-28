@@ -1,4 +1,5 @@
 """Pipeline tests with mocked LLM and retrieval."""
+
 from __future__ import annotations
 
 import pytest

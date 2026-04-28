@@ -1,4 +1,5 @@
 """Pydantic models shared across the GDPR AI pipeline."""
+
 from __future__ import annotations
 
 from typing import Any, Literal

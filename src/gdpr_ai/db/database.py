@@ -1,4 +1,5 @@
 """Application SQLite connection helpers and startup initialization."""
+
 from __future__ import annotations
 
 import logging

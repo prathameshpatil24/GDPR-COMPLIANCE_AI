@@ -1,4 +1,5 @@
 """FastAPI application factory and ASGI entrypoint."""
+
 from __future__ import annotations
 
 from contextlib import asynccontextmanager

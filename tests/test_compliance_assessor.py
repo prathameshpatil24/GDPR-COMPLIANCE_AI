@@ -1,4 +1,5 @@
 """Tests for compliance assessment and orchestrator logging."""
+
 from __future__ import annotations
 
 import json

@@ -1,4 +1,5 @@
 """Parse structured or free-text system descriptions into a ``DataMap``."""
+
 from __future__ import annotations
 
 import json

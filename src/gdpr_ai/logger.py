@@ -1,4 +1,5 @@
 """SQLite-backed query logging and lightweight analytics."""
+
 from __future__ import annotations
 
 import json

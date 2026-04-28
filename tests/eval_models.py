@@ -1,4 +1,5 @@
 """Pydantic models for unified gold evaluation reports."""
+
 from __future__ import annotations
 
 from datetime import UTC, datetime
@@ -15,7 +16,10 @@ class ScenarioResult(BaseModel):
     status: str = Field(description="pass | warn | fail | error")
     article_recall: float = 0.0
     article_precision: float = 0.0
-    law_recall: float | None = Field(None, description="violation_analysis only when expected_laws non-empty")
+    law_recall: float | None = Field(
+        None,
+        description="violation_analysis only when expected_laws non-empty",
+    )
     finding_coverage: float | None = None
     finding_accuracy: float | None = None
     document_completeness: float | None = None

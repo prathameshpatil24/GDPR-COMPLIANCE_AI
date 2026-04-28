@@ -1,4 +1,5 @@
 """BM25 tokenisation shared between indexing and retrieval."""
+
 from __future__ import annotations
 
 import re

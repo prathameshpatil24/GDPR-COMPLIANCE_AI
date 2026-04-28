@@ -1,4 +1,5 @@
 """Project resources backed by the application SQLite database."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -83,9 +84,7 @@ async def update_project(
     if not data:
         raise HTTPException(status_code=400, detail="No fields to update")
     name = str(data["name"]).strip() if "name" in data else None
-    sdesc = (
-        str(data["system_description"]).strip() if "system_description" in data else None
-    )
+    sdesc = str(data["system_description"]).strip() if "system_description" in data else None
     updated = await repo.update_project(project_id, name=name, system_description=sdesc)
     if not updated:
         raise HTTPException(status_code=404, detail="Project not found")

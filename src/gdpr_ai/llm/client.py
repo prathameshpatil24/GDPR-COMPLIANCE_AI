@@ -1,4 +1,5 @@
 """Async Anthropic client with retries, token accounting, and EUR cost estimates."""
+
 from __future__ import annotations
 
 import asyncio
@@ -10,6 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from anthropic import APIStatusError, AsyncAnthropic, RateLimitError
+from anthropic.types import TextBlock
 
 from gdpr_ai.config import settings
 from gdpr_ai.exceptions import ConfigurationError, LLMError
@@ -94,6 +96,82 @@ def extract_json_object(raw: str) -> dict[str, Any]:
     return json.loads(payload)
 
 
+def is_truncated_json_error(exc: BaseException) -> bool:
+    """Return True when failure is likely due to cut-off model output."""
+    if isinstance(exc, json.JSONDecodeError):
+        msg = str(exc).lower()
+        if "unterminated" in msg:
+            return True
+        if "expecting" in msg and any(x in msg for x in ("delimiter", "value", "property name")):
+            return True
+    msg = str(exc).lower()
+    return "unclosed" in msg or "truncated" in msg
+
+
+def repair_truncated_json(raw: str) -> dict[str, Any] | None:
+    """Attempt to close a truncated top-level JSON object (strings-aware, best-effort)."""
+    cleaned = _strip_markdown_json_fence(raw)
+    start = cleaned.find("{")
+    if start == -1:
+        return None
+    s = cleaned[start:]
+    stack: list[str] = []
+    in_string = False
+    escape = False
+    for ch in s:
+        if in_string:
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+            continue
+        if ch == "{":
+            stack.append("{")
+        elif ch == "[":
+            stack.append("[")
+        elif ch == "}":
+            if not stack or stack[-1] != "{":
+                return None
+            stack.pop()
+        elif ch == "]":
+            if not stack or stack[-1] != "[":
+                return None
+            stack.pop()
+    if in_string:
+        return None
+    if not stack:
+        try:
+            return json.loads(s)
+        except json.JSONDecodeError:
+            return None
+    suffix_chars: list[str] = []
+    while stack:
+        op = stack.pop()
+        suffix_chars.append("}" if op == "{" else "]")
+    candidate = s + "".join(suffix_chars)
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        return None
+
+
+def extract_json_object_with_repair(raw: str) -> tuple[dict[str, Any], bool]:
+    """Parse JSON like :func:`extract_json_object`, then try structural repair if needed."""
+    try:
+        return extract_json_object(raw), False
+    except (json.JSONDecodeError, ValueError) as exc:
+        fixed = repair_truncated_json(raw)
+        if fixed is not None:
+            logger.warning("Heuristic JSON truncation repair succeeded (%s)", exc)
+            return fixed, True
+        raise
+
+
 async def complete_text(
     *,
     model: str,
@@ -122,7 +200,7 @@ async def complete_text(
                 messages=[{"role": "user", "content": user}],
             )
             latency_ms = int((time.perf_counter() - t0) * 1000)
-            text = "".join(b.text for b in msg.content if getattr(b, "type", None) == "text")
+            text = "".join(b.text for b in msg.content if isinstance(b, TextBlock))
             usage = msg.usage
             in_tok = int(getattr(usage, "input_tokens", 0) or 0)
             out_tok = int(getattr(usage, "output_tokens", 0) or 0)

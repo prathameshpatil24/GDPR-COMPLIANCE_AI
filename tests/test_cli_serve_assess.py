@@ -1,4 +1,5 @@
 """CLI smoke tests for assess and serve commands."""
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch

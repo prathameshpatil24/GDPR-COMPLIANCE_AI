@@ -864,11 +864,16 @@ scenarios:
   - area: transparency
     min_status: at_risk
   expected_articles:
+  - '5'
   - '6'
   - '7'
   - '13'
+  - '21'
   - '28'
+  - '30'
   - '32'
+  - '44'
+  - '46'
   expected_documents:
   - dpia
   - ropa

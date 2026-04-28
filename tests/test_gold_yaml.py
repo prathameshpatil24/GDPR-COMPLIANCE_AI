@@ -1,4 +1,5 @@
 """Gold file structure checks."""
+
 from __future__ import annotations
 
 from pathlib import Path

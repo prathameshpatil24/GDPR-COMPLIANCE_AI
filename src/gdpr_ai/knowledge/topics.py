@@ -1,4 +1,5 @@
 """Heuristic topic tags for chunk metadata (taxonomy from architecture docs)."""
+
 from __future__ import annotations
 
 import re

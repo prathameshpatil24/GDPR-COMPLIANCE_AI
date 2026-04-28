@@ -1,11 +1,33 @@
 """Tests for retrieval helpers."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock
 
 from gdpr_ai.knowledge.bm25_tokens import bm25_tokenize
 from gdpr_ai.models import ClassifiedTopics, ExtractedEntities, RetrievedChunk
-from gdpr_ai.retriever import retrieve
+from gdpr_ai.retriever import _dense_query_text, retrieve
+
+
+def test_dense_query_text_adds_transfer_and_security_hints() -> None:
+    topics = ClassifiedTopics(
+        topics=["gdpr", "transfers", "security-and-breaches", "security-of-processing"],
+        rationale="",
+    )
+    out = _dense_query_text("vendor subprocessors US region", topics)
+    assert "Articles 44" in out or "Article 44" in out
+    assert "Article 32" in out
+
+
+def test_dense_query_text_adds_consent_and_information_hints() -> None:
+    topics = ClassifiedTopics(
+        topics=["gdpr", "consent", "information", "data-subject-rights"],
+        rationale="",
+    )
+    out = _dense_query_text("newsletter signup", topics)
+    assert "Article 5" in out
+    assert "Article 7" in out
+    assert "Articles 12 and 13" in out
 
 
 def test_bm25_tokenize_splits_words() -> None:

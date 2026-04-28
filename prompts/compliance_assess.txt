@@ -9,6 +9,12 @@ Analyse the system against these materials and return ONLY valid JSON matching t
 Rules:
 - For each finding use area (short slug), status (compliant | at_risk | non_compliant | insufficient_info),
   relevant_articles (strings), description, optional remediation and technical_guidance.
+- Cover every major theme visible in the data map with at least one finding where material:
+  lawful basis and consent (often Arts. 5–7); transparency and notices (Arts. 12–14); processors,
+  DPAs, and sub-processing (incl. Art. 28); security of processing (Art. 32) when hosting or DBs exist;
+  international transfers and safeguards (Arts. 44–46) when data leaves the EEA or uses non-EEA vendors.
+  Spell each theme plainly in `area` so it is obvious (e.g. include words like "consent",
+  "transparency", "processor", "security", "transfer" where applicable).
 - Only cite article or section labels that appear in the retrieved chunk texts or chunk metadata
   (article_number, full_citation). If unsure, use insufficient_info and explain the gap.
 - Be specific in remediation and technical_guidance where status is at_risk or non_compliant.

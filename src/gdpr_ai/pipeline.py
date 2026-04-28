@@ -1,4 +1,5 @@
 """End-to-end GDPR analysis pipeline (extract → classify → retrieve → reason → validate)."""
+
 from __future__ import annotations
 
 import asyncio
@@ -10,7 +11,12 @@ from typing import Any
 
 from gdpr_ai.config import settings
 from gdpr_ai.exceptions import ExtractionFailed, HallucinationDetected, ReasoningFailed
-from gdpr_ai.llm.client import LLMResult, complete_text, extract_json_object
+from gdpr_ai.llm.client import (
+    LLMResult,
+    complete_text,
+    extract_json_object_with_repair,
+    is_truncated_json_error,
+)
 from gdpr_ai.logger import log_query
 from gdpr_ai.models import AnalysisReport, ClassifiedTopics, ExtractedEntities, RetrievedChunk
 from gdpr_ai.prompts import render_prompt
@@ -29,6 +35,7 @@ def _retrieved_articles_summary(chunks: list[RetrievedChunk]) -> str:
         }
     )
     return ",".join(refs)
+
 
 _ALLOWED_TOPICS = {
     "legal-basis",
@@ -72,19 +79,22 @@ async def _call_stage_json(
     retries: int = 3,
 ) -> tuple[dict[str, Any], LLMResult]:
     last_err: Exception | None = None
+    current_cap = max_tokens
     for attempt in range(retries + 1):
         try:
             res = await complete_text(
                 model=model,
                 system=system_header,
                 user=user,
-                max_tokens=max_tokens,
+                max_tokens=current_cap,
             )
-            data = extract_json_object(res.text)
+            data, _ = extract_json_object_with_repair(res.text)
             return data, res
         except Exception as exc:  # noqa: BLE001
             last_err = exc
             logger.warning("Stage parse failed (attempt %s): %s", attempt + 1, exc)
+            if attempt < retries and is_truncated_json_error(exc):
+                current_cap = min(current_cap + 4096, 32768)
             await asyncio.sleep(0.4 * (attempt + 1))
     raise last_err  # type: ignore[misc]
 

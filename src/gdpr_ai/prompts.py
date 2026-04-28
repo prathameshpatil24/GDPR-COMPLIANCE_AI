@@ -1,4 +1,5 @@
 """Load versioned prompt templates from the repository `prompts/` directory."""
+
 from __future__ import annotations
 
 from functools import lru_cache

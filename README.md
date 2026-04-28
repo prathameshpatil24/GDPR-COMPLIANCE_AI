@@ -1,154 +1,215 @@
-# GDPR Violation Analyzer (gdpr-ai)
+# GDPR AI
 
-**gdpr-ai** turns short natural-language privacy scenarios into a **grounded** list of likely GDPR-related breaches: every cited article must be supported by retrieved knowledge-base chunks, not invented.
+AI-powered GDPR compliance analysis tool. Describe a privacy scenario or your system architecture in plain English — get a grounded, structured report citing specific GDPR articles, recitals, and EDPB guidelines with confidence scores and source links.
 
-## What it does
+Built with RAG (Retrieval-Augmented Generation) over the full GDPR text, BDSG, TTDSG, and EDPB guidance. Every cited article is backed by retrieved knowledge-base chunks, not hallucinated.
 
-The tool is aimed at **German-market** contexts: EU GDPR plus English translations of BDSG and TTDSG, and EDPB-style guidance where indexed. You describe a situation in English; the pipeline extracts facts, classifies legal topics, retrieves relevant sources from a local vector database, and produces a structured report with confidence scores and source URLs.
+> **Not legal advice.** Output is informational only. A qualified professional must interpret the results.
 
-It does **not** provide legal advice; it assists analysis and documentation.
+---
 
-## Quick demo
+## Features
 
-**Violation analysis (v1)** — scenario describes a possible breach:
-
-```bash
-uv run gdpr-check analyze "A company emails marketing without consent."
-```
-
-**Compliance assessment (v2)** — you describe *your* system; the tool returns a structured assessment plus optional document drafts (DPIA, RoPA, checklist, consent flow, retention):
+### Violation Analysis
+Describe a scenario; get a severity rating, violated articles with confidence scores, actionable recommendations, and honest "retrieval gap" notes when something is relevant but ungrounded.
 
 ```bash
-uv run gdpr-check assess "We run a B2B SaaS in Frankfurt; we store emails in Postgres EU and use a US email vendor as processor."
+uv run gdpr-check analyze "A company sends marketing emails to users without getting consent"
 ```
 
-**Local HTTP API** (same engines as the CLI):
+### Compliance Assessment
+Describe your system; get an auto-generated data map, risk level, and findings across 10+ compliance areas (legal basis, transparency, international transfers, processor agreements, security, retention, DPIA, data subject rights, and more).
+
+```bash
+uv run gdpr-check assess "SaaS collecting emails via web form, sends newsletters via Mailchimp, data in PostgreSQL on AWS eu-central-1"
+```
+
+### REST API
+Same analysis engines exposed via FastAPI:
 
 ```bash
 uv run gdpr-check serve
-# then e.g. curl http://127.0.0.1:8000/health
+# POST /api/v1/analyze/violation
+# POST /api/v1/analyze/compliance
+# GET  /health
 ```
 
-Typical v1 output includes a severity assessment, a table of articles with confidence and source links, and optional “not grounded” notes when something seems relevant but no chunk supported it. See [`docs/sample-output.md`](docs/sample-output.md) for a trimmed example.
+### Observability
+```bash
+uv run gdpr-check stats      # aggregated cost, latency, token usage
+uv run gdpr-check history     # recent analysis runs
+```
+
+---
+
+## Example Outputs
+
+**Simple scenario** — marketing emails without consent:
+- Severity: **HIGH**
+- Articles flagged: Art. 6 (0.95), Art. 7 (0.93), Art. 21 (0.97), Art. 13 (0.80), Art. 14 (0.72), Art. 17 (0.75)
+- Includes 10 actionable recommendations and retrieval gap notes for ePrivacy Directive, Art. 83 fines, Art. 5 principles
+
+**Complex scenario** — healthcare CRM with genetic data, children's data, AI/automated decisions, 5 third-party processors, multi-region AWS, transfers to US/UK/Japan:
+- Severity: **CRITICAL**
+- 15 findings across: special category data, consent validity, automated decision-making, DPIA, transparency, retention, international transfers (split by US processors vs research universities), processor contracts, security, data protection by design, children's data, data subject rights, breach notification readiness, ROPA
+
+**Minimal scenario** — offline calculator app with no data collection:
+- Severity: **LOW**
+- All areas compliant, with a scope verification note to audit for inadvertent SDK telemetry
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| LLM | Anthropic Claude API (Claude 4 Sonnet) |
+| Vector store | ChromaDB with sentence-transformers embeddings |
+| Retrieval | Dense + BM25 hybrid search |
+| API | FastAPI |
+| CLI | Typer + Rich |
+| Database | SQLite (analysis persistence + query telemetry) |
+| Language | Python 3.11+ |
+
+---
 
 ## Architecture
 
-High-level flow (extract → classify → retrieve → reason → validate) and the knowledge-base build path are in [`docs/architecture.md`](docs/architecture.md).
+**Five-stage pipeline** with validation:
 
-### v2 compliance mode (summary)
+1. **Extract** — Structured entities from natural language (actors, data types, processing activities, jurisdiction, special categories)
+2. **Classify** — Topic tags (consent, transfers, security, children, AI/automated decisions, etc.) to steer retrieval
+3. **Retrieve** — Hybrid dense + BM25 search over ChromaDB; topic-aware routing pulls from main GDPR collection plus specialized v2 collections (DPIA, RoPA, TOM, consent guidance, EDPB guidelines)
+4. **Reason** — LLM generates structured JSON report grounded only in retrieved chunks
+5. **Validate** — Second pass removes or corrects citations not provable from retrieved context
 
-1. **Intake** — Free text or JSON `DataMap` → normalized `DataMap` (language model for prose).
-2. **Map** — Hybrid retrieval over the main GDPR collection plus v2 collections (DPIA, RoPA, TOM, consent guidance, AI Act) where configured.
-3. **Assess** — Language model produces `ComplianceAssessment` (findings, articles); citations are filtered like v1.
-4. **Documents** — Jinja2 templates render markdown (DPIA, RoPA, checklist, consent flow, retention policy).
-5. **API / persistence** — FastAPI routes under `/api/v1`; projects, analyses, and generated documents live in `SQLITE_PATH` (default `data/app.db`). Query telemetry remains in `LOG_DB_PATH` (default `logs/gdpr_ai.db`).
+### Compliance mode (v2) adds:
 
-Example requests (with the server listening on port 8000):
+1. **Intake** — Free text or JSON DataMap → normalized DataMap (LLM parses prose into structured data categories, flows, third parties, storage)
+2. **Map** — Hybrid retrieval across main + v2 collections based on classified topics and data map signals
+3. **Assess** — LLM produces ComplianceAssessment with findings per compliance area, relevant articles, remediation, and technical guidance
+4. **API / Persistence** — FastAPI routes; projects, analyses, and documents stored in SQLite
 
-```bash
-curl -s http://127.0.0.1:8000/health
-curl -s -X POST http://127.0.0.1:8000/api/v1/analyze/violation \
-  -H "Content-Type: application/json" \
-  -d '{"scenario": "A company sends marketing emails without consent"}'
-curl -s -X POST http://127.0.0.1:8000/api/v1/analyze/compliance \
-  -H "Content-Type: application/json" \
-  -d '{"system_description": "Newsletter SaaS storing emails in the EU with a US processor."}'
-```
+---
 
-## Getting started
+## Getting Started
 
-**Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv), and an API key for your LLM provider (set in `.env`).
+**Prerequisites:** Python 3.11+, [uv](https://github.com/astral-sh/uv), Anthropic API key
 
 1. **Clone and install**
-
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/prathameshpatil7/gdpr-ai.git
    cd gdpr-ai
    uv sync
    ```
 
 2. **Configure environment**
+   ```bash
+   cp .env.example .env
+   # Set ANTHROPIC_API_KEY and optional paths (CHROMA_PATH, LOG_DB_PATH, etc.)
+   ```
 
-   Create `.env` in the project root (see `src/gdpr_ai/config.py` for variable names). At minimum set the API key and optional paths (`CHROMA_PATH`, `LOG_DB_PATH`, etc.).
-
-3. **Build the knowledge base** (one-time; no API calls in scrapers)
-
+3. **Build the knowledge base** (one-time, no API calls)
    ```bash
    uv run python scripts/scrape_gdpr.py
    uv run python scripts/scrape_bdsg.py
    uv run python scripts/scrape_ttdsg.py
-   # … other scrapers as needed
    uv run python scripts/translate_sources.py
    uv run python scripts/chunk_and_embed.py
    ```
 
-4. **Smoke-test retrieval** (optional)
-
+4. **Run an analysis**
    ```bash
-   uv run python scripts/verify_retrieval.py
+   uv run gdpr-check analyze "Your scenario here"
+   uv run gdpr-check assess "Your system description here"
    ```
 
-5. **Run an analysis**
+---
 
-   ```bash
-   uv run gdpr-check analyze "Your scenario here."
-   ```
+## API Usage
 
-**Observability**
+Start the server:
+```bash
+uv run gdpr-check serve
+```
 
-- `uv run gdpr-check stats` — aggregates from the SQLite query log (`LOG_DB_PATH`, default `logs/gdpr_ai.db`).
-- `uv run gdpr-check history --last 10` — recent runs; `gdpr-check history --id <uuid>` for detail.
-- `uv run gdpr-check feedback --id <uuid> --rating up|down` — store quick feedback.
+**Violation analysis:**
+```bash
+curl -X POST http://localhost:8000/api/v1/analyze/violation \
+  -H "Content-Type: application/json" \
+  -d '{"scenario": "A German hospital accidentally emails patient test results to the wrong patient."}'
+```
 
-A motivated developer can complete steps 1–5 in well under 30 minutes once raw data and embeddings are already built; a cold build depends on network speed and translation throughput.
+**Compliance assessment:**
+```bash
+curl -X POST http://localhost:8000/api/v1/analyze/compliance \
+  -H "Content-Type: application/json" \
+  -d '{"system_description": "Mobile fitness app tracking location and heart rate, stored on AWS eu-central-1, anonymized analytics shared with US research partner."}'
+```
 
-## Knowledge base sources
+---
 
-| Source | How it is used | License / terms |
-|--------|----------------|-------------------|
+## Evaluation Framework
+
+Gold-standard test scenarios with automated scoring:
+
+```bash
+uv run python tests/run_eval.py --scenarios SC-V-001,SC-C-001
+uv run python tests/run_eval.py --mode violation_analysis --dry-run
+```
+
+**Metrics:**
+- **Article recall** — % of expected GDPR articles found
+- **Article precision** — % of flagged articles that are expected (recitals excluded from penalty)
+- **Finding coverage** — % of expected compliance areas addressed
+- **Law recall** — % of expected legal instruments cited
+
+**Filters:** `--mode`, `--scenarios`, `--difficulty`, `--category`
+
+**Regression detection:** `--check-baseline` warns on >5pp drops, exits 1 on >10pp drops.
+
+**Gold set:** 30 violation scenarios (`SC-V-*`) + 20 compliance scenarios (`SC-C-*`) in `gold/test_scenarios.yaml`
+
+---
+
+## Knowledge Base Sources
+
+| Source | Usage | License |
+|--------|-------|---------|
 | EU GDPR (consolidated) | Articles + recitals, chunked and embedded | EU law (public) |
-| gdpr-info.eu mirror | Fallback HTML when EUR-Lex blocks automated fetches | Unofficial consolidation; check site terms |
-| BDSG / TTDSG (gesetze-im-internet.de) | Scraped, translated to English at index time | German public law |
-| EDPB guidelines (as scraped) | Chunked guidance | EDPB reuse policy |
-| Enforcement / secondary sources | As added to `data/raw` per project rules | Per-file attribution in chunk metadata |
+| BDSG / TTDSG | Scraped from gesetze-im-internet.de, translated at index time | German public law |
+| EDPB guidelines | Chunked guidance (breach notification, transfers, consent) | EDPB reuse policy |
+| gdpr-info.eu | Fallback HTML source | Unofficial consolidation |
 
-Every chunk carries `source`, `source_url`, `license`, and related metadata for traceability.
+Every chunk carries `source`, `source_url`, and `license` metadata for traceability.
 
-## How it works (four stages + validation)
-
-1. **Extract** — Structured entities (who, what data, which processing, jurisdiction).
-2. **Classify** — Topic tags (consent, transfers, employment, etc.) to steer retrieval.
-3. **Retrieve** — Dense + BM25 hybrid search over ChromaDB (sentence-transformer embeddings).
-4. **Reason** — Draft JSON report from retrieved context only.
-5. **Validate** — Second pass removes or corrects citations that are not provable from retrieved chunks.
-
-## Evaluation
-
-- **Unified gold set:** `gold/test_scenarios.yaml` — 30 `violation_analysis` scenarios (`SC-V-*`) and 20 `compliance_assessment` scenarios (`SC-C-*`), single schema with a `mode` field.
-- **Harness:** `uv run python tests/run_eval.py` — runs the correct pipeline per scenario; use `--dry-run` to validate YAML and compliance `DataMap` shape without API calls. Live runs need an API key in `.env` and print a rough cost estimate (`--yes` skips the confirmation prompt).
-- **Filters:** `--mode violation_analysis` / `compliance_assessment`, `--scenarios SC-V-001,SC-C-001`, `--difficulty easy|medium|hard`, `--category <label>`.
-- **Output / regression:** `--output path.json` writes a full `EvalReport`; `gold/baseline.json` stores aggregate targets; `--check-baseline` warns on >5 pp regression and exits 1 on >10 pp drops (per tracked metric).
-- **Replay (violation only):** `--replay path/to/eval.json` recomputes article metrics from saved `actual_keys` (legacy ids `SC-001` … are mapped to `SC-V-001` …).
-- **Reported metrics:** See [`docs/eval-results.md`](docs/eval-results.md) (update after each formal eval).
+---
 
 ## Cost
 
-Rough order of magnitude (depends on provider pricing and scenario length):
+| Operation | Approximate cost |
+|-----------|-----------------|
+| Single violation analysis | €0.02–0.08 |
+| Single compliance assessment | €0.08–0.17 |
+| Complex compliance (healthcare CRM) | ~€0.17 |
+| Offline calculator (minimal) | ~€0.03 |
 
-- **Single analysis:** on the order of **€0.02–€0.08** for a typical scenario with the default models in `config`.
-- **Full unified gold eval (50 scenarios):** use the cost line printed by `tests/run_eval.py` before confirming (compliance rows run assessment plus document marker checks).
+---
 
 ## Limitations
 
-- **Not legal advice** — Output is informational; a qualified professional must interpret it.
-- **English runtime** — User-facing text is English; German sources are translated at index time.
-- **Indexed law only** — If an article or statute is not in the database, the tool will not invent it; you may see “retrieval gap” notes instead.
-- **ePrivacy** — Cookie-only scenarios may be incomplete unless TTDSG / guidance chunks cover the fact pattern (see gold scenario SC-V-018).
+- **Not legal advice** — requires professional interpretation
+- **English runtime** — German legal sources translated at index time
+- **Indexed law only** — if an article isn't in the knowledge base, you'll see "retrieval gap" notes instead of hallucinated citations
+- **ePrivacy gaps** — cookie/electronic marketing scenarios may be incomplete unless TTDSG chunks cover the pattern
+- **Latency** — complex assessments take 90–190s due to multi-stage LLM pipeline
+
+---
 
 ## License
 
-This project is released under the **MIT License** — see [`LICENSE`](LICENSE).
+MIT License — see [LICENSE](LICENSE).
 
 ## Attribution
 
-Retain all `source`, `source_url`, and `license` fields when exporting or redistributing chunks. Third-party datasets (e.g. CC BY-NC-SA material such as GDPRhub, if used) must keep their original attribution and licence constraints.
+Retain all `source`, `source_url`, and `license` fields when exporting or redistributing chunks. Third-party datasets with specific license constraints (e.g., CC BY-NC-SA) must keep their original attribution.

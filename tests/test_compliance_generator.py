@@ -1,4 +1,5 @@
 """Tests for compliance document generation (Jinja2)."""
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -9,6 +9,9 @@ System description:
 Rules:
 - Extract every data category, processing purpose, data flow, third party,
   and storage location mentioned or implied.
+- When a vendor or subprocesser is US-based or clearly outside the EEA, represent that in third_parties.country
+  and set data_flows so that transfers to that vendor use crosses_border: true (when data leaves your systems)
+  with destination_country reflecting the vendor region (e.g. US).
 - If information is not stated, use null for optional string fields or omit
   optional lists only when truly empty; prefer empty lists [] over guessing.
 - sensitivity must be one of: standard, special_category, criminal

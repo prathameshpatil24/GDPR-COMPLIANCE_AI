@@ -1,4 +1,5 @@
 """Gold-set metrics and knowledge-base article inventory for evaluation runs."""
+
 from __future__ import annotations
 
 import re
@@ -6,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import chromadb
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from gdpr_ai.config import settings
 from gdpr_ai.llm.client import estimate_cost_eur
@@ -141,7 +142,11 @@ def scenario_metrics(
     }
 
 
-def estimate_eval_run_cost_eur(num_scenarios: int, calls_per_scenario: int = 4, tokens_per_call: int = 2000) -> float:
+def estimate_eval_run_cost_eur(
+    num_scenarios: int,
+    calls_per_scenario: int = 4,
+    tokens_per_call: int = 2000,
+) -> float:
     """Rough order-of-magnitude cost for a full eval run (reasoning-heavy stages dominate)."""
     total_in = num_scenarios * calls_per_scenario * int(tokens_per_call * 0.55)
     total_out = num_scenarios * calls_per_scenario * int(tokens_per_call * 0.45)

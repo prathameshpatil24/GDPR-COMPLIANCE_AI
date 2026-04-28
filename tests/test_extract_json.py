@@ -1,4 +1,5 @@
 """Tests for model JSON extraction helpers."""
+
 from __future__ import annotations
 
 from gdpr_ai.llm.client import extract_json_object

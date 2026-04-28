@@ -1,4 +1,5 @@
 """FastAPI dependencies."""
+
 from __future__ import annotations
 
 from gdpr_ai.config import settings

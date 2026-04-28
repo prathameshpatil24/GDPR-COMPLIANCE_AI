@@ -1,4 +1,5 @@
 """Render compliance documents from a ComplianceAssessment using Jinja2 templates."""
+
 from __future__ import annotations
 
 import logging
@@ -102,11 +103,7 @@ def _get_storage_for_category(data_map: DataMap, cat: DataCategory) -> list[Stor
 
 
 def _get_purpose_for_category(data_map: DataMap, cat: DataCategory) -> str:
-    names = [
-        p.purpose
-        for p in data_map.processing_purposes
-        if cat.name in p.data_categories
-    ]
+    names = [p.purpose for p in data_map.processing_purposes if cat.name in p.data_categories]
     return "; ".join(names) if names else ""
 
 
@@ -121,9 +118,7 @@ def _purpose_involves_special_category(data_map: DataMap, purpose: ProcessingPur
 
 def _purposes_special_category(data_map: DataMap) -> list[ProcessingPurpose]:
     return [
-        p
-        for p in data_map.processing_purposes
-        if _purpose_involves_special_category(data_map, p)
+        p for p in data_map.processing_purposes if _purpose_involves_special_category(data_map, p)
     ]
 
 

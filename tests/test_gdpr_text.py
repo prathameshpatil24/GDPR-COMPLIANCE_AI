@@ -1,4 +1,5 @@
 """Unit tests for GDPR chunk text helpers."""
+
 from __future__ import annotations
 
 from gdpr_ai.knowledge.gdpr_text import citation_title, paragraphs_from_gdpr_article_text

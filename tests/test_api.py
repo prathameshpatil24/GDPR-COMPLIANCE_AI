@@ -1,4 +1,5 @@
 """HTTP API tests (FastAPI TestClient)."""
+
 from __future__ import annotations
 
 import asyncio

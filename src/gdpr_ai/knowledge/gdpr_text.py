@@ -1,4 +1,5 @@
 """Split GDPR article plain text into embed-friendly pieces with stable headings."""
+
 from __future__ import annotations
 
 import re

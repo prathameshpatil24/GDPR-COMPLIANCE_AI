@@ -1,4 +1,5 @@
 """Build chunk rows for v2 auxiliary knowledge collections (DPIA, RoPA, TOM, consent, AI Act)."""
+
 from __future__ import annotations
 
 import json
@@ -74,7 +75,11 @@ def chunks_from_ropa_template(path: Path) -> list[V2ChunkRow]:
     """Turn RoPA template JSON into retrieval chunks (fields + narrative)."""
     raw = json.loads(path.read_text(encoding="utf-8"))
     rows: list[V2ChunkRow] = []
-    base_url = str(raw.get("source_url", "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"))
+    base_url = str(
+        raw.get(
+            "source_url", "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"
+        )
+    )
     # Flatten field groups into chunk-friendly text blocks
     for group_name in ("controller_record_fields", "processor_record_fields"):
         fields = raw.get(group_name, []) or []
@@ -139,7 +144,11 @@ def chunks_from_tom_catalog(path: Path) -> list[V2ChunkRow]:
     """One chunk per TOM catalog entry."""
     raw = json.loads(path.read_text(encoding="utf-8"))
     rows: list[V2ChunkRow] = []
-    base_url = str(raw.get("source_url", "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"))
+    base_url = str(
+        raw.get(
+            "source_url", "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"
+        )
+    )
     for entry in raw.get("entries", []) or []:
         cat = str(entry.get("category", "measure"))
         art = str(entry.get("gdpr_article", "Art. 32"))

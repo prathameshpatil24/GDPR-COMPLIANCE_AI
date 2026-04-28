@@ -1,4 +1,5 @@
 """Local embedding model wrapper (sentence-transformers)."""
+
 from __future__ import annotations
 
 from functools import lru_cache
