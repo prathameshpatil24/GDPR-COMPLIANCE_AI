@@ -250,7 +250,17 @@ Details: [docs/README.md](docs/README.md) and [docs/phase-0-overview/03-target-u
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
+Copyright © 2026 Prathamesh Patil. All rights reserved.
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+You may view, fork, and modify the code for personal and educational purposes. However:
+
+- **Any use of this software in a networked service (SaaS, API, web app)** requires you to release your complete source code under AGPL-3.0
+- **Commercial use** without open-sourcing your derivative work is prohibited under this license
+- **For commercial licensing** (closed-source use, enterprise deployment, white-labeling): contact prathamesh.p9594@gmail.com
+
+See [LICENSE](LICENSE) for the full license text.
 
 ## Attribution
 
