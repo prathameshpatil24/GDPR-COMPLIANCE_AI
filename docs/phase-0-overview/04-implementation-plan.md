@@ -120,7 +120,7 @@ Version 1 is the simplest possible end-to-end system that delivers the core valu
 * `src/gdpr_ai/cli.py` — connected end-to-end CLI
 * `src/gdpr_ai/llm/claude_client.py` — Anthropic SDK wrapper
 
-**Success criteria**: `gdpr-check "<scenario>"` produces a structured report in under 5 seconds. Pipeline runs end-to-end for all 30 gold scenarios. Cost per query stays under 0.05 EUR.
+**Success criteria**: `gdpr-check "<scenario>"` produces a structured report end-to-end for all 30 gold scenarios with stage latencies logged (full runs are LLM-bound — typically tens of seconds, not sub-5s). Cost per query stays near the project budget target (see current NFRs).
 
 ### 3.7 Phase G – Evaluation and Iteration (Days 9–10)
 
@@ -292,22 +292,31 @@ Version 1 is considered shipped when all of the following are true:
 
 ## 9. Post-v1 Considerations
 
-### 9.1 What Is Explicitly Deferred to v2
+### 9.1 What Remains Deferred After v1 (re-mapped to v3 / v4)
 
-* Web UI and FastAPI HTTP layer
-* Multi-turn reasoning
-* Document upload (privacy policies, DPAs)
-* Website scanning
-* Multilingual retrieval and UI
-* Cross-encoder re-ranking
-* Cloud hosting
-* CI/CD pipeline
-* Knowledge graph layer
+**v2 (now shipped)** delivered the FastAPI HTTP layer, compliance pipeline, SQLite persistence, eval harness, and related hardening — not the web UI.
 
-### 9.2 What Is Deferred Beyond v2
+**Deferred to v3** (web product):
+
+* Browser **web UI** (React dashboard) consuming the local API
+* **Authentication** and **rate limiting** for hosted or multi-user use
+* **Feedback capture** in the product UI (beyond CLI hooks)
+* **PDF export** and rich in-browser report rendering
+* **Multi-turn** clarifying flows in the UI where designed
+* **Cloud hosting** and **CI/CD** for deployed environments (see Phase 3.20)
+
+**Deferred to v4** (scale and multilingual):
+
+* **Multilingual** retrieval (German-first) and aligned UI/report language
+* **Document upload** and **website scanning** as inputs
+* **Knowledge base** refresh cadence for a public service
+* Formal **terms of service** and **privacy policy**
+* **Optional commercial licensing** (CC BY-NC-SA constraints on GDPRhub content)
+* **Cross-encoder re-ranking** and optional **knowledge graph** layers remain future enhancements unless prioritized earlier
+
+### 9.2 What Is Deferred Beyond v4
 
 * Jurisdictions outside GDPR and German law
-* Commercial licensing path (requires CC BY-NC-SA negotiation)
 * Enterprise audit workflow features
 
 ---

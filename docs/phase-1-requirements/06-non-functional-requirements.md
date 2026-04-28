@@ -12,11 +12,11 @@ Every non-functional requirement has a measurable target and a verification meth
 
 ### NFR-01 – End-to-End Latency
 
-The total time from scenario input to displayed report must stay under 5 seconds for typical scenarios.
+Full runs are dominated by sequential **LLM** stages (extract, classify, reason, validate, and compliance-mode generation). **Observed** end-to-end times are typically **20–190 seconds** depending on scenario or system-description complexity, model choice, and hardware—not sub-second chat latency. **Retrieval** remains sub-second in normal conditions.
 
-* Target: p50 ≤ 3 seconds, p95 ≤ 5 seconds
-* Measured: from CLI command entry to final output render
-* Verification: logged per query, aggregated weekly
+* Measured: from CLI or API request start to final structured output
+* Verification: logged per query (`latency_per_stage`), aggregated in stats/history
+* User-facing docs MUST set expectations accordingly (see [03 – Target Users](../phase-0-overview/03-target-users.md) §7.1)
 
 ### NFR-02 – Retrieval Latency
 
@@ -28,11 +28,10 @@ Retrieval from ChromaDB must complete in under 200 milliseconds.
 
 ### NFR-03 – LLM Call Latency
 
-Each language model call must complete in under 3 seconds.
+Each language model call is **bounded by the provider** and prompt size; **Sonnet-class reasoning** commonly exceeds a few seconds. Targets are **monitoring-based**, not hard real-time caps: log p95 per stage and alert on regressions versus recent baselines.
 
-* Target: p95 ≤ 3 seconds per stage (extract, classify, reason)
-* Dependencies: Anthropic API response time
-* Mitigation: streaming disabled for v1 to keep validation simple
+* Dependencies: Anthropic API response time, token counts, tool use
+* Mitigation: stage-level timeouts and retries where safe; streaming policy per implementation
 
 ### NFR-04 – Cold Start
 
@@ -263,7 +262,7 @@ The system must handle at least 100 queries per hour on a modern laptop.
 
 * Constraint: Anthropic API rate limits
 * Target: sufficient for personal use
-* v2 scope: multi-user concurrency
+* **v3+** hosted scope: multi-user concurrency
 
 ---
 
@@ -281,7 +280,7 @@ All logs must be structured and queryable.
 
 Total and per-query costs must be visible at any time.
 
-* Command: `gdpr-check stats` (v1) or dashboard (v2)
+* Command: `gdpr-check stats` (v1–v2 CLI) or web **dashboard** (**v3**)
 * Metrics: total cost today, total cost this month, cost per query average
 
 ---

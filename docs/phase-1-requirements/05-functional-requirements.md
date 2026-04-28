@@ -192,7 +192,7 @@ The system must provide a script to run the full pipeline against the gold set.
 Every change that touches prompts, retrieval, or chunking must be measured against the gold set.
 
 * Rule: precision and recall must not drop below the previous baseline
-* Enforcement: manual for v1 (documented in commit message), CI-enforced in v2
+* Enforcement: manual for local development; **CI-enforced when CI/CD lands (v3+)**
 
 ---
 
@@ -250,7 +250,7 @@ CLI output must be rendered with syntax colouring and clear structure.
 
 Some functional requirements rely on non-functional guarantees. These are listed here as a cross-reference only. Details are in [06 – Non-Functional Requirements](06-non-functional-requirements.md).
 
-* Latency: FR-06 (retrieval) and FR-07 (reasoning) together must complete within 5 seconds
+* Latency: FR-06 (retrieval) stays fast; FR-07 (reasoning) dominates end-to-end time — see [06 – Non-Functional Requirements](06-non-functional-requirements.md) NFR-01 and [03 – Target Users](../phase-0-overview/03-target-users.md) §7.1
 * Cost: FR-07 must stay under 0.05 EUR per query on average
 * Accuracy: FR-20 must demonstrate precision >= 0.8 on the gold set
 
@@ -260,7 +260,7 @@ Some functional requirements rely on non-functional guarantees. These are listed
 
 GDPR AI's functional requirements cover input handling, pipeline processing, structured output, knowledge base completeness, evaluation, observability, and CLI interaction. Every requirement has a verifiable acceptance criterion and a clear owner in the system architecture.
 
-The requirements are intentionally scoped for v1 simplicity — single-shot scenario analysis with a CLI interface — with explicit deferral of multi-turn conversation, document upload, and website scanning to later versions.
+The requirements are intentionally scoped for v1 simplicity — single-shot scenario analysis with a CLI interface — with explicit deferral of **multi-turn product flows** to **v3** (web) and **document upload / website scanning** to **v4** (see [03 – Target Users](../phase-0-overview/03-target-users.md)).
 
 ---
 

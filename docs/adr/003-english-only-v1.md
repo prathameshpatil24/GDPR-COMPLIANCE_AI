@@ -22,7 +22,7 @@ Options:
 
 ## Decision
 
-**English-only runtime for v1. German and other languages are deferred to v2+.**
+**English-only runtime for v1–v3.** German-first multilingual retrieval and UI are **v4** scope (see [Documentation README](../README.md) version roadmap).
 
 ---
 
@@ -83,7 +83,7 @@ A monolingual v1 ships weeks sooner than a bilingual one. Shipping v1 unlocks re
 
 * **English comprehension**: EU compliance professionals typically read English
 * **Translation nuance**: translations spot-checked against originals for legal terms; original German retained in metadata
-* **Accessibility**: v2 will add German UI
+* **Accessibility**: **v4** will add German-first multilingual UI and retrieval (see product roadmap)
 
 ---
 
@@ -103,7 +103,7 @@ Rejected because:
 
 ### Cross-Lingual Retrieval (bge-m3 supports this natively)
 
-Considered. bge-m3 is designed for cross-lingual retrieval, and this path remains open for v2. For v1, the additional tuning effort and retrieval quality risk did not justify the complexity.
+Considered. bge-m3 is designed for cross-lingual retrieval, and this path remains open for **v4**. For v1, the additional tuning effort and retrieval quality risk did not justify the complexity.
 
 ---
 
@@ -111,4 +111,4 @@ Considered. bge-m3 is designed for cross-lingual retrieval, and this path remain
 
 * Knowledge base built with German sources translated to English (see ADR-004)
 * CLI accepts and produces only English
-* v2 roadmap includes multilingual UI and retrieval as a first-class feature
+* **v4** roadmap includes multilingual UI and retrieval (German-first) as a first-class feature

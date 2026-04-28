@@ -13,8 +13,8 @@ This document describes the top-level system design, the four-stage processing p
 ### 2.1 Primary Goals
 
 * Accurate article identification with strict grounding
-* Sub-5-second response time for typical scenarios
-* Low per-query cost (under 0.05 EUR average)
+* Predictable end-to-end latency: retrieval stays fast; full runs are dominated by LLM stages (tens of seconds to a few minutes for typical inputs — see [03 – Target Users](../phase-0-overview/03-target-users.md) §7.1)
+* Low per-query cost (under 0.05 EUR average where the architecture allows)
 * German-market specialisation (GDPR + BDSG + TTDSG)
 * Local-first execution with minimal external dependencies
 
@@ -336,9 +336,9 @@ Every report output includes attribution in the footer.
 
 ## 10. Extension Points
 
-The architecture is designed to accept these v2 extensions without rework:
+The architecture is designed to accept these extensions without rework:
 
-* Replace CLI with FastAPI layer (same pipeline)
+* **v2 (shipped):** FastAPI layer **alongside** the CLI (same pipelines)
 * Replace ChromaDB with Qdrant (same interface)
 * Add re-ranker stage between Retrieve and Reason
 * Add clarifying-question stage before Extract (multi-turn)

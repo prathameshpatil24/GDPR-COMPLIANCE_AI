@@ -4,7 +4,7 @@
 
 Observability is built in from v1, even in a local CLI context. Every query is logged with full context, latency, token usage, and cost. This data powers three things: debugging, cost control, and long-term quality tracking.
 
-v1 observability is file-based and local. v2 adds hosted dashboards, external monitoring, and proactive alerting.
+v1 observability is file-based and local. **v2** extends the same local discipline to the **API** and compliance mode. **v3+** (hosted web product) adds external dashboards, service monitoring, and proactive alerting as deployed.
 
 ---
 
@@ -76,9 +76,8 @@ Even as a solo developer, the following metrics are reviewed regularly:
 
 ### 3.3 Latency Metrics
 
-* P50 total latency (target: under 4s)
-* P95 total latency (target: under 6s)
-* Per-stage latency breakdown (to spot degradation)
+* End-to-end wall time is **LLM-dominated** (often tens of seconds to a few minutes — see [03 – Target Users](../phase-0-overview/03-target-users.md) §7.1); track p50/p95 **per stage** and total
+* Per-stage latency breakdown (to spot retrieval vs reasoning regressions)
 
 ### 3.4 Reliability Metrics
 
@@ -97,11 +96,11 @@ No automated alerting in v1. The developer reviews metrics manually. Mental thre
 | Daily cost | > 5 EUR (investigate cause) |
 | F1 (gold set) | drops > 5% after a change |
 | Hallucination count | any occurrence (investigate) |
-| P95 latency | > 6s sustained (investigate) |
+| P95 total latency | jumps sharply vs recent baseline (investigate) |
 
 ---
 
-## 5. v2 Observability (Hosted Service)
+## 5. v3+ Observability (Hosted Service)
 
 ### 5.1 Metrics Stack
 
@@ -166,7 +165,7 @@ Grafana dashboards, all stored as code in `infra/grafana/`:
 
 ---
 
-## 6. v2 Alerting
+## 6. v3+ Alerting (Hosted)
 
 ### 6.1 Alerting Tool
 
@@ -193,7 +192,7 @@ Grafana alerts with email and Telegram delivery.
 
 ---
 
-## 7. Tracing (v2)
+## 7. Tracing (v3+)
 
 ### 7.1 OpenTelemetry Instrumentation
 
@@ -209,15 +208,15 @@ Request-level trace covers the full query with parent span.
 
 ### 7.2 Trace Backend
 
-For v2 simplicity, traces sampled at 10% and stored in Tempo (running alongside Grafana in the same Compose stack). Upgrade to a hosted tracing service only if debugging needs demand it.
+For early **v3+** deployments, traces sampled at 10% and stored in Tempo (running alongside Grafana in the same Compose stack). Upgrade to a hosted tracing service only if debugging needs demand it.
 
 ---
 
-## 8. Logging in v2
+## 8. Logging in v3+ (Hosted)
 
 ### 8.1 Structured JSON Logs
 
-All logs in v2 are structured JSON, suitable for ingestion by any log aggregator.
+All logs in **hosted** deployments are structured JSON, suitable for ingestion by any log aggregator.
 
 ```json
 {
@@ -234,7 +233,7 @@ All logs in v2 are structured JSON, suitable for ingestion by any log aggregator
 
 ### 8.2 Log Aggregation
 
-For v2: Loki (logs) + Grafana (viewing) in the same Compose stack. Simple, cheap, no external dependencies.
+For **v3+**: Loki (logs) + Grafana (viewing) in the same Compose stack. Simple, cheap, no external dependencies.
 
 ### 8.3 Retention
 
@@ -261,7 +260,7 @@ Checks:
 
 Output: traffic-light status per check, with specific remediation advice.
 
-### 9.2 Status Endpoint (v2)
+### 9.2 Status Endpoint (API — local v2, monitored in v3+)
 
 ```
 GET /v1/status
@@ -298,7 +297,7 @@ For v3 (public launch), a status page at `status.gdpr-ai.example.com` shows serv
 
 Developer reviews SQLite daily totals. No automated enforcement.
 
-### 10.2 v2 (Automated)
+### 10.2 v3+ (Automated, Hosted)
 
 If daily cost exceeds the configured budget (default: 20 EUR):
 
@@ -315,7 +314,7 @@ Configurable per environment.
 ### 11.1 Query Logs
 
 * v1 (local): indefinite, user controls via `gdpr-check logs clear`
-* v2 (hosted): 90 days default, opt-in to 1 year
+* **v3+** (hosted): 90 days default, opt-in to 1 year
 
 ### 11.2 Metrics
 
@@ -331,7 +330,7 @@ Daily encrypted backup of SQLite to off-server storage. 30-day retention.
 
 ### 12.1 Runbooks
 
-Documented in `docs/runbooks/` (v2):
+Documented in `docs/runbooks/` (**v3+** hosted operations):
 
 * Anthropic API outage
 * Hallucination rate spike
@@ -347,7 +346,7 @@ Incidents recorded in `docs/incidents/<date>.md` with timeline, root cause, acti
 
 ## 13. Summary
 
-Observability is treated as a first-class feature from v1 (local SQLite query log + cost tracking) and expanded in v2 to a full Prometheus + Grafana + Loki stack hosted alongside the service. Every query is traceable end-to-end. Cost is continuously tracked and enforced. Quality regressions are caught by the nightly evaluation run.
+Observability is treated as a first-class feature from **v1** (local SQLite query log + cost tracking), extended in **v2** for the **local API** and compliance mode (same logging discipline), and expanded in **v3+** to a full Prometheus + Grafana + Loki stack **when the product is hosted**. Every query remains traceable end-to-end in the data model. Cost is continuously tracked locally from v1 onward; hosted deployments add budget enforcement and alerts. Quality regressions are caught by evaluation runs (nightly when CI permits).
 
 This observability foundation is what enables confident iteration — every change can be measured, every regression caught, every cost surprise flagged early.
 

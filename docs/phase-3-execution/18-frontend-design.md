@@ -6,9 +6,9 @@
 
 Version 1 uses the terminal as the user interface. Users enter scenarios via `gdpr-check` and receive Rich-formatted output. This is ideal for solo developer use but limits adoption by non-technical users.
 
-Version 2 introduces a web UI that exposes the same pipeline via a browser-based experience, targeting the broader user segments defined in [03 – Target Users](../phase-0-overview/03-target-users.md).
+Version **3** introduces a **React dashboard** (this document uses **Next.js** as the reference stack) that exposes the same pipelines via a browser, targeting the broader user segments defined in [03 – Target Users](../phase-0-overview/03-target-users.md).
 
-**Documentation refresh:** The repository’s v2 scope is **CLI + local REST API** only; a browser UI is **deferred to v3** and is expected to call the API defined in [11 – API Design](../phase-2-architecture/11-api-design.md). Earlier wording in this file that ties the UI to “v2” describes the original sequencing; the **v2 / v3 Note** at the end is authoritative for current scope.
+**Scope:** **v2** ships **CLI + local REST API** only. The browser UI is **v3** and consumes the API in [11 – API Design](../phase-2-architecture/11-api-design.md). **v4** covers multilingual retrieval and UI; see the **Version roadmap** section in [Documentation README](../README.md).
 
 ---
 
@@ -21,7 +21,7 @@ Version 2 introduces a web UI that exposes the same pipeline via a browser-based
 * Preserve CLI behaviour — no divergence between the two interfaces
 * Fast iteration: a basic version shippable in days, not weeks
 
-### 2.2 Non-Goals for v2
+### 2.2 Non-Goals for v3 (initial web release)
 
 * Native mobile apps
 * Offline-first PWA
@@ -173,7 +173,7 @@ No nagging popups, no deceptive free trials, no hidden unsubscribe flows. Users 
 
 ---
 
-## 6. Authentication (v2)
+## 6. Authentication (v3)
 
 ### 6.1 Sign-Up Flow
 
@@ -218,7 +218,7 @@ After sign-up, user gets a default API key for programmatic use. Additional keys
 
 * First Contentful Paint: < 1.2s
 * Time to Interactive: < 2s
-* Analyse submit → report visible: < 5s (pipeline latency)
+* Analyse submit → report visible: match real pipeline latency (tens of seconds to a few minutes — see [03 – Target Users](../phase-0-overview/03-target-users.md) §7.1); UI must show progress, not imply instant chat
 * Lighthouse score: > 90 across categories
 
 ---
@@ -241,15 +241,15 @@ Thumbs-up / thumbs-down on each report stored with the query log. Optional free-
 
 ---
 
-## 10. Internationalisation (Future)
+## 10. Internationalisation (v4)
 
-v2 is English-only, matching the v1 scope. v3 may introduce:
+The **v3** web client is **English-first**, matching runtime policy today. **v4** introduces:
 
-* German interface (primary second language given target market)
-* Language switcher in header
-* Report output in selected language
+* German-first **multilingual retrieval** and aligned UI/report language
+* Language switcher in header (product decision)
+* Report output in selected language where the pipeline supports it
 
-The codebase will use i18n-ready patterns from the start (react-intl or next-intl) even in v2, to avoid refactoring later.
+The codebase should use i18n-ready patterns from the start (react-intl or next-intl) in **v3**, to avoid refactoring when **v4** lands.
 
 ---
 
@@ -290,12 +290,12 @@ GitHub Actions workflow:
 
 ## 13. Summary
 
-The v2 frontend is designed as a thin, well-styled client over the same pipeline that powers the CLI. Next.js + Tailwind + shadcn/ui deliver a professional, fast-loading interface with minimal maintenance overhead. Authentication, history, and feedback are built in from the start.
+The **v3** frontend is designed as a thin, well-styled **React** client over the same pipelines that power the CLI. Next.js + Tailwind + shadcn/ui (or equivalent) deliver a professional, fast-loading interface with minimal maintenance overhead. Authentication, history, feedback, and PDF export are built in from the start of the web release.
 
-Implementation begins only after v1 ships and the pipeline is validated against the gold test set.
+Implementation begins when the **v2** API and eval baselines are stable enough to be a dependable backend contract.
 
 ---
 
-## v2 / v3 Note
+## v2 / v3 / v4 Note
 
-Frontend work remains **out of scope for v2**. v2 delivers **CLI commands** and a **local REST API** only. **v3** is expected to add a **Next.js** web UI that consumes the v2 API; the stack choices in this document remain indicative for that phase.
+Frontend work remains **out of scope for v2**. **v2** delivers **CLI commands** and a **local REST API** only. **v3** adds the **React/Next.js** dashboard that consumes that API. **v4** adds multilingual retrieval and UI/report language strategy on top.
