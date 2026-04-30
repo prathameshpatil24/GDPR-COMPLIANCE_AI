@@ -131,3 +131,9 @@ Simplest possible approach: embeddings in a NumPy array, compute cosine similari
 * ChromaDB wrapper lives in `src/gdpr_ai/knowledge/store.py`
 * The wrapper abstracts the library, making future migration a single-file change
 * Performance monitored via per-stage latency logging
+
+---
+
+## v4 note (retrieval strategy)
+
+**v4** introduces **deterministic article mapping** and **cross-reference expansion** as the **primary** retrieval mechanism for core GDPR topics; **ChromaDB + BM25 hybrid search** is **retained** for fallback and long-tail content. See [v4-overview.md](../v4-overview.md) and [ADR-008](008-deterministic-retrieval-primary.md).

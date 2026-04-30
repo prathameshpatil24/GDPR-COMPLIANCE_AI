@@ -11,7 +11,7 @@ Every document in this folder is version-controlled and updated in lockstep with
 | **v1** | Violation analysis CLI — scenario in, grounded violation report out (**shipped**). |
 | **v2** | Compliance assessment (**intake → map → assess → generate**), local **REST API**, SQLite persistence, document generation, unified **eval** framework, JSON/output hardening, **stats** / **history** (**shipped**). |
 | **v3** | **Web UI** (React dashboard), authentication, rate limiting, feedback capture, PDF export, in-browser reports (**planned**). |
-| **v4** | **Retrieval Gap Tracker** (closed-loop KB improvement), German-first **multilingual** retrieval, **document upload**, **website scanning**, KB refresh at service scale, ToS/privacy, optional commercial licensing (**planned**). See [v4-overview.md](v4-overview.md). |
+| **v4** | **Near-100% accuracy architecture** (deterministic article mapping, cross-reference graph, full-text assembly, verification, confidence scoring; ChromaDB + BM25 as fallback), **Retrieval Gap Tracker**, German-first **multilingual** retrieval, **document upload**, **website scanning**, KB refresh at service scale, ToS/privacy, optional commercial licensing (**planned**). See [v4-overview.md](v4-overview.md). |
 
 ## v2 Scope
 
@@ -30,7 +30,7 @@ Implementation-agnostic specs for the **React + Vite** dashboard (v3): overview,
 
 ## V4 — Product planning
 
-Prioritised features: **retrieval gap tracker**, **multilingual retrieval**, **document upload**, **website scanning**.
+Prioritised features: **near-100% accuracy architecture**, **retrieval gap tracker**, **multilingual retrieval**, **document upload**, **website scanning**.
 
 * [v4-overview.md](v4-overview.md) — rationale, scope, dependencies
 * [v4-gap-tracker.md](v4-gap-tracker.md) — schema, CLI/API, ingestion, metrics
@@ -83,11 +83,12 @@ Point-in-time records of significant design decisions, preserved even when decis
 
 * [001 – Pre-Indexed RAG over Live Fetching](adr/001-pre-indexed-rag-over-live-fetching.md)
 * [002 – ChromaDB for v1](adr/002-chromadb-for-v1.md)
-* [003 – English-Only Runtime](adr/003-english-only-runtime.md)
+* [003 – English-Only Runtime](adr/003-english-only-v1.md)
 * [004 – One-Time Translation of German Sources](adr/004-one-time-translation.md)
 * [005 – Strict Grounding Over Generation Quality](adr/005-strict-grounding.md)
 * [006 – Dual-Mode Architecture (v1 + v2)](adr/006-dual-mode-architecture.md)
 * [007 – SQLite for Local Persistence](adr/007-sqlite-for-local-persistence.md)
+* [008 – Deterministic Retrieval Primary (v4)](adr/008-deterministic-retrieval-primary.md)
 
 ## How to Read This
 

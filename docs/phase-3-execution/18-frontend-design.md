@@ -8,7 +8,7 @@ Version 1 uses the terminal as the user interface. Users enter scenarios via `gd
 
 Version **3** introduces a **React dashboard** (this document uses **Next.js** as the reference stack) that exposes the same pipelines via a browser, targeting the broader user segments defined in [03 – Target Users](../phase-0-overview/03-target-users.md).
 
-**Scope:** **v2** ships **CLI + local REST API** only. The browser UI is **v3** and consumes the API in [11 – API Design](../phase-2-architecture/11-api-design.md). **v4** adds the **Retrieval Gap Tracker** (dashboard/API), **multilingual** retrieval, **document upload**, and **website scanning**; see [v4-overview.md](../v4-overview.md) and the **Version roadmap** in [Documentation README](../README.md).
+**Scope:** **v2** ships **CLI + local REST API** only. The browser UI is **v3** and consumes the API in [11 – API Design](../phase-2-architecture/11-api-design.md). **v4** adds **near-100% accuracy architecture**, the **Retrieval Gap Tracker** (dashboard/API), **multilingual** retrieval, **document upload**, and **website scanning**; see [v4-overview.md](../v4-overview.md) and the **Version roadmap** in [Documentation README](../README.md).
 
 ---
 
@@ -300,4 +300,4 @@ Implementation begins when the **v2** API and eval baselines are stable enough t
 
 ## v2 / v3 / v4 Note
 
-Frontend work remains **out of scope for v2**. **v2** delivers **CLI commands** and a **local REST API** only. **v3** adds the **React** dashboard that consumes that API. **v4** adds **gap analytics**, multilingual retrieval, document/URL inputs, and UI/report language strategy on top ([v4-roadmap.md](../v4-roadmap.md)).
+Frontend work remains **out of scope for v2**. **v2** delivers **CLI commands** and a **local REST API** only. **v3** adds the **React** dashboard that consumes that API. **v4** adds **near-100% accuracy**-related UX (citations, confidence, uncertainty), **gap analytics**, multilingual retrieval, document/URL inputs, and UI/report language strategy on top ([v4-roadmap.md](../v4-roadmap.md)).

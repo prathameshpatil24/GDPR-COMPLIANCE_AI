@@ -100,3 +100,9 @@ The user provides a URL (e.g., a company's privacy policy) and the system fetche
 * Pre-indexing scripts implemented in Phase B of the implementation plan
 * Refresh cadence documented in the knowledge base schema doc
 * Live-fetch fallback revisited in v2 planning
+
+---
+
+## v4 note (retrieval strategy)
+
+**v4** adds **deterministic article mapping**, a **cross-reference graph**, and **full-text article assembly** ahead of chunk-based **ChromaDB + BM25** retrieval for the common case; hybrid search remains the **fallback** when rules do not match. See [v4-overview.md](../v4-overview.md).

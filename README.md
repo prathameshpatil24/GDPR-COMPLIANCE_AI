@@ -242,7 +242,7 @@ Every chunk carries `source`, `source_url`, and `license` metadata for traceabil
 | **v1** | Violation analysis CLI |
 | **v2** | Compliance assessment, local REST API, eval framework, SQLite persistence *(current)* |
 | **v3** | Web UI (React dashboard), auth, rate limits, feedback, PDF export |
-| **v4** | German-first multilingual retrieval, document upload, website scanning, ToS/privacy, optional commercial path |
+| **v4** | Near-100% accuracy architecture (deterministic retrieval, verification, confidence), gap tracker, German-first multilingual retrieval, document upload, website scanning, ToS/privacy, optional commercial path |
 
 Details: [docs/README.md](docs/README.md) and [docs/phase-0-overview/03-target-users.md](docs/phase-0-overview/03-target-users.md).
 

@@ -171,14 +171,17 @@ Browser-based product surface on top of the v2 API:
 * **PDF export** and **in-browser** rendered reports
 * **Multi-turn** clarifying flows where the product design needs them
 
-### 4.4 Version 4 – Gap Tracker, Multilingual Retrieval, New Inputs, and Public Product (planned)
+### 4.4 Version 4 – Near-100% Accuracy, Gap Tracker, Multilingual Retrieval, New Inputs, and Public Product (planned)
+
+v4 prioritises **near-100% retrieval accuracy** through **deterministic article mapping**, **cross-reference graph expansion**, **full-text article assembly**, a **verification** pass, and **confidence scoring** — with **ChromaDB + BM25** retained as **fallback** for edge cases (see [V4 Feature Overview](../v4-overview.md)).
 
 Priority order (see [V4 Feature Overview](../v4-overview.md)):
 
-1. **Retrieval Gap Tracker** — automated logging and ranking of ungrounded article references (from violation `unsupported_notes` and compliance `insufficient_info` findings), CLI/API visibility, optional semi-automated ingestion, and **gap-rate** metrics so accuracy improves **without** manual gap spreadsheets.
-2. **Multilingual retrieval** (German-first): bilingual indexing and cross-lingual retrieval; **response language English** initially; UI language indicator.
-3. **Document upload** — privacy policies, DPAs, consent forms, and related artefacts as first-class inputs (PDF/DOCX/TXT).
-4. **Website scanning** — URL in; privacy/cookie signals extracted; compliance assessment on scraped text (with rate limits).
+1. **Near-100% Accuracy Architecture** — rule-based topic-to-article map, parsed GDPR cross-reference expansion, full-text store for reasoning context, second-pass LLM verification, per-claim and overall confidence (explicit uncertainty when not grounded).
+2. **Retrieval Gap Tracker** — automated logging and ranking of ungrounded article references (from violation `unsupported_notes` and compliance `insufficient_info` findings), CLI/API visibility, optional semi-automated ingestion, and **gap-rate** metrics; **feeds curation** of the deterministic map for a **self-improving** loop.
+3. **Multilingual retrieval** (German-first): bilingual indexing and cross-lingual retrieval; **response language English** initially; UI language indicator.
+4. **Document upload** — privacy policies, DPAs, consent forms, and related artefacts as first-class inputs (PDF/DOCX/TXT).
+5. **Website scanning** — URL in; privacy/cookie signals extracted; compliance assessment on scraped text (with rate limits).
 
 Also still in scope for v4 where previously planned:
 
@@ -233,7 +236,8 @@ A **web UI** lets users type scenarios or system descriptions into a text area, 
 
 ### 6.4 Future Interaction (v4)
 
-* **Gaps dashboard** — see which articles most often lack KB coverage; trigger or plan ingestion from ranked gaps
+* **Higher-confidence analysis** — deterministic primary retrieval, verification pass, and **confidence / uncertainty** surfaced in the UI alongside citations
+* **Gaps dashboard** — see which articles most often lack KB or map coverage; trigger or plan ingestion and map updates from ranked gaps
 * **Multilingual input** (German-first) aligned with retrieval; **English** structured output initially
 * **Document upload** for privacy-policy, DPA, consent, and related review workflows
 * **Website scanning** as an input source (subject to technical and legal guardrails in requirements)
@@ -244,8 +248,9 @@ A **web UI** lets users type scenarios or system descriptions into a text area, 
 
 ### 7.1 What Users Can Expect
 
-* **Latency** — Full pipeline runs are dominated by sequential LLM calls; observed end-to-end times are roughly **20–190 seconds** depending on scenario or system-description complexity, model routing, and hardware—not sub-second interactive chat. Retrieval itself remains fast; most time is reasoning and validation.
+* **Latency** — Full pipeline runs are dominated by sequential LLM calls; observed end-to-end times are roughly **20–190 seconds** depending on scenario or system-description complexity, model routing, and hardware—not sub-second interactive chat. Retrieval itself remains fast; most time is reasoning and validation. **v4** adds a **verification** LLM call per analysis on top of the primary reasoning call.
 * Accurate article citations grounded in the knowledge base
+* **v4:** **Confidence scoring** on claims and **explicit flags** when the system is **not sure**, rather than guessing
 * Clear disclaimers that the output is informational
 * Consistent report format across queries
 * Attribution to source documents for every claim

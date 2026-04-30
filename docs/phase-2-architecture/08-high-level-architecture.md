@@ -131,6 +131,8 @@ The core processing pipeline has four stages, each with a single responsibility.
 * `metadata` — source, article, paragraph, topic tags, URL, license
 * `score` — combined retrieval score
 
+**v4 (planned):** For mapped topics, **deterministic article mapping**, **cross-reference expansion**, and **full-text assembly** run **before** (and instead of relying solely on) this hybrid step; **ChromaDB + BM25** remains the **fallback** merge path. See [v4-overview.md](../v4-overview.md).
+
 ### 4.4 Stage 4 – Reason
 
 **Purpose**: Produce the structured report.
@@ -266,7 +268,7 @@ CLI render [Rich]
 Query log [SQLite]
 ```
 
----
+Note: **v4** planning makes **deterministic article mapping + cross-reference expansion + full-text assembly** the **primary** retrieval path; **ChromaDB + BM25** remains **fallback**. See [v4-overview.md](../v4-overview.md).
 
 ## 7. Trust Boundaries
 

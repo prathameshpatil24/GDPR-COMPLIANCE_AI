@@ -404,6 +404,8 @@ For incremental updates (e.g., new GDPRhub cases):
 
 The data model is structured for both retrieval efficiency and traceability. Paragraph-level chunking preserves sub-clause precision. Rich metadata enables filtered retrieval. The fixed taxonomy constrains classification. Hybrid retrieval combines dense semantic similarity with sparse keyword matching. Translation of German sources happens once during indexing, keeping runtime costs minimal.
 
+**Note (v4 planning):** **Deterministic article mapping** and **full-text article assembly** become the **primary** context path for core GDPR topics; **hybrid ChromaDB + BM25** stays as **fallback**. See [v4-overview.md](../v4-overview.md).
+
 Every chunk is traceable to its source, its license, and its legal identifier — supporting both accuracy and the licensing obligations defined in the project's constraint set.
 
 ---

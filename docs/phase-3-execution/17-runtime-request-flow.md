@@ -65,6 +65,8 @@ User types: gdpr-check "scenario text here"
 Total expected latency: ~4500ms
 ```
 
+Note: **v4** introduces **deterministic article mapping** as the **primary** retrieval mechanism. See [v4-overview.md](../v4-overview.md).
+
 ---
 
 ## 3. Step-by-Step Detail

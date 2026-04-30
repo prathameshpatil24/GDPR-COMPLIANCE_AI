@@ -6,6 +6,8 @@ This document specifies each pipeline module in detail: its inputs, outputs, pro
 
 Every module is designed to be independently testable, with a clear data contract at its boundary.
 
+**Note (v4 planning):** Retrieval will gain a **deterministic primary path** (article map, cross-reference graph, full-text store); **ChromaDB + BM25** remains **fallback**. The module contracts below describe the **v1–v3** implementation. See [v4-overview.md](../v4-overview.md).
+
 ---
 
 ## 2. Module: `pipeline.extract`

@@ -140,6 +140,8 @@ Every choice is evaluated against the project's core priorities: accuracy, low c
 * **SPLADE**: Neural sparse retrieval, much higher setup complexity
 * **Elasticsearch**: Overkill for 10K chunks
 
+**Note (v4 planning):** BM25 remains part of the **semantic fallback** path alongside ChromaDB; **primary** retrieval moves to deterministic mapping for mapped topics. See [v4-overview.md](../v4-overview.md).
+
 ---
 
 ## 5. Application Layer

@@ -4,6 +4,26 @@ Ordered delivery plan for [v4-overview.md](v4-overview.md). Milestones are **seq
 
 ---
 
+## Milestone 0: Near-100% Accuracy Architecture
+
+**Outcome:** Primary retrieval is **deterministic** (article map + cross-reference graph + full-text store); hybrid vector search remains **fallback**; outputs gain **verification** and **confidence** signalling.
+
+| Sub-milestone | Deliverable |
+|---------------|-------------|
+| **0a** | **GDPR Article Map** — `data/article_map.yaml` (hand-curated topic → article/recital/guidance mapping, ~200–300 rules) |
+| **0b** | **Cross-Reference Graph** — `src/gdpr_ai/retrieval/cross_ref_graph.py`: parse and build directed graph of GDPR internal references (plus linked national refs as available) |
+| **0c** | **Full-Text Article Store** — `data/articles/` and/or SQLite: complete text per article/recital/key sections (BDSG/TTDSG as scoped) |
+| **0d** | **Pipeline integration** — wire Layers 1–3 into retrieval; **merge/dedupe** with semantic fallback |
+| **0e** | **Gold baseline run** — capture “before” metrics on unified gold set |
+| **0f** | **Verification layer** — `src/gdpr_ai/reasoning/verifier.py` + completeness checklist prompt |
+| **0g** | **Confidence scoring** — Pydantic / output schema: `source_article`, `confidence` per claim, overall score |
+| **0h** | **Gold final run** — “after” metrics and improvement delta |
+| **0i** | **Documentation** — README accuracy comparison; architecture diagrams updated (see [architecture.md](architecture.md), [v4-overview.md](v4-overview.md)) |
+
+**Design detail:** [v4-overview.md](v4-overview.md) (Feature 1), [adr/008-deterministic-retrieval-primary.md](adr/008-deterministic-retrieval-primary.md)
+
+---
+
 ## Milestone 1: Retrieval Gap Tracker
 
 **Outcome:** Gaps are logged, inspectable, ingestible, and visible in the product metrics story.

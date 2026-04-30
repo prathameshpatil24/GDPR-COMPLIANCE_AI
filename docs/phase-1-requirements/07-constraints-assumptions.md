@@ -58,7 +58,7 @@ All user-facing surfaces (input, output, CLI) use English only in v1.
 
 * Scenarios are accepted only in English
 * Reports are generated only in English
-* Multilingual UI is deferred to **v4** (German-first; see [03 – Target Users](../phase-0-overview/03-target-users.md) and [v4-overview.md](../v4-overview.md); **Retrieval Gap Tracker** is v4 priority 1)
+* Multilingual UI is deferred to **v4** (German-first; see [03 – Target Users](../phase-0-overview/03-target-users.md) and [v4-overview.md](../v4-overview.md); **Near-100% Accuracy Architecture** is v4 priority 1, **Retrieval Gap Tracker** priority 2)
 
 ### C-06 – Text-Only Input
 
