@@ -195,6 +195,8 @@ def retrieve(
     topics: ClassifiedTopics,
     entities: ExtractedEntities,
     top_k: int | None = None,
+    *,
+    mode: str = "violation",
 ) -> list[RetrievedChunk]:
     """Primary retrieval: deterministic map + graph + full-text, then optional hybrid fallback."""
     from gdpr_ai.retrieval.deterministic_retriever import retrieve_deterministic
@@ -207,6 +209,7 @@ def retrieve(
         entities,
         semantic_retrieve_fn=semantic_retrieve,
         top_k=top_k,
+        mode=mode,
         # Always merge full top_k hybrid semantic results with deterministic map/graph;
         # DETERMINISTIC_SEMANTIC_FALLBACK no longer disables semantic (use
         # DETERMINISTIC_RETRIEVAL=false for semantic-only).

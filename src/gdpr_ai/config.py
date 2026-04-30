@@ -89,11 +89,49 @@ class Settings(BaseSettings):
         validation_alias="DETERMINISTIC_RETRIEVAL",
         description="Use article map + cross-ref + full-text assembly as primary retrieval (v4).",
     )
+    deterministic_max_supplement_violation: int = Field(
+        default=5,
+        validation_alias="DETERMINISTIC_MAX_SUPPLEMENT_VIOLATION",
+        ge=0,
+        le=50,
+        description=(
+            "Violation mode: max extra GDPR articles from map/graph not already in semantic chunks."
+        ),
+    )
+    deterministic_graph_depth_violation: int = Field(
+        default=1,
+        validation_alias="DETERMINISTIC_GRAPH_DEPTH_VIOLATION",
+        ge=0,
+        le=3,
+        description="Violation mode: cross-reference expansion depth (0 = map only).",
+    )
+    deterministic_max_supplement_compliance: int = Field(
+        default=5,
+        validation_alias="DETERMINISTIC_MAX_SUPPLEMENT_COMPLIANCE",
+        ge=0,
+        le=50,
+        description=(
+            "Compliance mode: max extra GDPR articles from map/graph not already "
+            "in semantic chunks."
+        ),
+    )
+    deterministic_graph_depth_compliance: int = Field(
+        default=0,
+        validation_alias="DETERMINISTIC_GRAPH_DEPTH_COMPLIANCE",
+        ge=0,
+        le=3,
+        description=(
+            "Compliance mode: cross-reference depth; 0 disables expansion (map-only deterministic)."
+        ),
+    )
     deterministic_graph_depth: int = Field(
         default=1,
         validation_alias="DETERMINISTIC_GRAPH_DEPTH",
         ge=0,
         le=3,
+        description=(
+            "Legacy global default; v4 uses deterministic_graph_depth_violation or _compliance."
+        ),
     )
     deterministic_max_context_tokens: int = Field(
         default=30000,
@@ -106,8 +144,8 @@ class Settings(BaseSettings):
         ge=0,
         le=50,
         description=(
-            "Max GDPR articles injected as full-text supplement when not already "
-            "covered by semantic chunks (deterministic map/graph gaps only)."
+            "Legacy cap; v4 uses DETERMINISTIC_MAX_SUPPLEMENT_VIOLATION / "
+            "DETERMINISTIC_MAX_SUPPLEMENT_COMPLIANCE."
         ),
     )
     deterministic_semantic_fallback: bool = Field(

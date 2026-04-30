@@ -237,7 +237,7 @@ def _retrieve_merged(query: str, topics: ClassifiedTopics) -> list[RetrievedChun
     entities = ExtractedEntities(jurisdiction="EU", summary=query[:2000])
     try:
         main_k = max(14, settings.top_k // 2 + 2)
-        main = retrieve(query, topics, entities, top_k=main_k)
+        main = retrieve(query, topics, entities, top_k=main_k, mode="compliance")
     except Exception as exc:  # noqa: BLE001
         logger.warning("Main retrieval failed: %s", exc)
         main = []

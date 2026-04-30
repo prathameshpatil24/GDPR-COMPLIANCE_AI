@@ -208,13 +208,22 @@ def _chunks_for_prompt(chunks: list[RetrievedChunk]) -> str:
             supplementary.append(c)
         else:
             primary.append(c)
-    body = {
-        "=== Retrieved Evidence (primary) ===": [_serialize_chunk_for_prompt(c) for c in primary],
-        "=== Additional Legal Context (supplementary) ===": [
-            _serialize_chunk_for_prompt(c) for c in supplementary
-        ],
-    }
-    return json.dumps(body, ensure_ascii=False)
+    primary_payload = json.dumps(
+        [_serialize_chunk_for_prompt(c) for c in primary],
+        ensure_ascii=False,
+    )
+    supplementary_payload = json.dumps(
+        [_serialize_chunk_for_prompt(c) for c in supplementary],
+        ensure_ascii=False,
+    )
+    n = len(primary)
+    return (
+        f"[Primary evidence from semantic search — {n} relevant excerpts]\n\n"
+        f"{primary_payload}\n\n"
+        "[Additional regulatory context — for reference only, do not cite unless "
+        "directly relevant to the specific query]\n\n"
+        f"{supplementary_payload}"
+    )
 
 
 async def reason_report(
@@ -298,7 +307,13 @@ async def run_pipeline_logged(scenario_text: str) -> tuple[AnalysisReport, str]:
     total_cost += cr.cost_eur
 
     t0 = time.perf_counter()
-    chunks = retrieve(scenario_text, topics, entities, top_k=settings.top_k)
+    chunks = retrieve(
+        scenario_text,
+        topics,
+        entities,
+        top_k=settings.top_k,
+        mode="violation",
+    )
     lat_retrieve = int((time.perf_counter() - t0) * 1000)
 
     async def _reason_validate_once() -> tuple[AnalysisReport, int, int]:

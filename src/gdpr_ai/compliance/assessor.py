@@ -20,17 +20,40 @@ from gdpr_ai.prompts import load_prompt, render_prompt
 logger = logging.getLogger(__name__)
 
 
+def _serialize_chunk(c: RetrievedChunk) -> dict[str, Any]:
+    """One chunk dict for the assessment prompt."""
+    return {
+        "chunk_id": c.chunk_id,
+        "text": c.text,
+        "metadata": c.metadata,
+    }
+
+
 def _chunks_json(chunks: list[RetrievedChunk]) -> str:
-    """Serialise chunks for the assessment prompt."""
-    payload = [
-        {
-            "chunk_id": c.chunk_id,
-            "text": c.text,
-            "metadata": c.metadata,
-        }
-        for c in chunks
-    ]
-    return json.dumps(payload, ensure_ascii=False)
+    """Serialise chunks with primary vs supplementary framing (matches violation pipeline)."""
+    primary: list[RetrievedChunk] = []
+    supplementary: list[RetrievedChunk] = []
+    for c in chunks:
+        if c.metadata.get("retrieval_source") == "deterministic_map_graph":
+            supplementary.append(c)
+        else:
+            primary.append(c)
+    primary_payload = json.dumps(
+        [_serialize_chunk(c) for c in primary],
+        ensure_ascii=False,
+    )
+    supplementary_payload = json.dumps(
+        [_serialize_chunk(c) for c in supplementary],
+        ensure_ascii=False,
+    )
+    n = len(primary)
+    return (
+        f"[Primary evidence from semantic search — {n} relevant excerpts]\n\n"
+        f"{primary_payload}\n\n"
+        "[Additional regulatory context — for reference only, do not cite unless "
+        "directly relevant to the specific query]\n\n"
+        f"{supplementary_payload}"
+    )
 
 
 def _flatten_chunks(article_map: dict[str, list[RetrievedChunk]]) -> list[RetrievedChunk]:

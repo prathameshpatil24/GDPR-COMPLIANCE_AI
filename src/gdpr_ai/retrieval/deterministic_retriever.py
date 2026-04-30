@@ -10,9 +10,14 @@ from typing import Any
 
 from gdpr_ai.config import settings
 from gdpr_ai.models import ClassifiedTopics, ExtractedEntities, RetrievedChunk
-from gdpr_ai.retrieval.article_map import primary_article_number, resolve_articles
+from gdpr_ai.retrieval.article_map import (
+    load_article_map,
+    primary_article_number,
+    resolve_articles,
+    resolve_topic_key,
+)
 from gdpr_ai.retrieval.article_store import (
-    assemble_targeted_context,
+    assemble_supplementary_summaries,
     eurlex_source_url,
     get_article_text,
     keyword_match_score,
@@ -89,6 +94,52 @@ def _pick_supplement_articles(
                 return ordered
             ordered.append(a)
     return ordered
+
+
+def prioritize_novel_articles(
+    novel_articles: set[str],
+    matched_topics: list[str],
+    article_map: dict[str, Any],
+    max_articles: int,
+    *,
+    query_keywords: list[str] | None = None,
+) -> list[str]:
+    """
+    Rank novel articles by how many matched topics reference them.
+
+    An article referenced by multiple matched topics ranks above one referenced by a
+    single topic. Tie-break: keyword overlap with full article text, then numeric id.
+    """
+    if max_articles <= 0 or not novel_articles:
+        return []
+    nums = sorted({primary_article_number(a) for a in novel_articles}, key=int)
+    scores: dict[str, int] = {a: 0 for a in nums}
+    for topic in matched_topics:
+        spec = article_map.get(topic)
+        if not isinstance(spec, dict):
+            continue
+        topic_articles = {primary_article_number(str(x)) for x in (spec.get("gdpr_articles") or [])}
+        for article in nums:
+            if article in topic_articles:
+                scores[article] += 1
+    kws = query_keywords or []
+    ranked = sorted(
+        nums,
+        key=lambda a: (-scores[a], -keyword_match_score(get_article_text(a) or "", kws), int(a)),
+    )
+    return ranked[:max_articles]
+
+
+def _matched_topic_keys(topic_slugs: list[str]) -> list[str]:
+    """Deduplicated YAML topic keys for classifier topic slugs."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for slug in topic_slugs or []:
+        k = resolve_topic_key(slug)
+        if k and k not in seen:
+            seen.add(k)
+            out.append(k)
+    return out
 
 
 @dataclass
@@ -174,6 +225,7 @@ def retrieve_deterministic(
     *,
     semantic_retrieve_fn: Callable[..., list[RetrievedChunk]],
     top_k: int | None = None,
+    mode: str = "violation",
     use_semantic_fallback: bool = True,
     graph_depth: int | None = None,
     max_context_tokens: int | None = None,
@@ -182,12 +234,22 @@ def retrieve_deterministic(
 
     Runs hybrid semantic search as the baseline, then adds targeted GDPR full text only for
     articles produced by the article map and cross-reference graph that are **not** already
-    represented in semantic chunk metadata—capped and keyword-prioritized to limit dilution.
+    represented in semantic chunk metadata—capped and prioritized to limit dilution.
     """
     k = top_k if top_k is not None else settings.top_k
-    depth = settings.deterministic_graph_depth if graph_depth is None else graph_depth
+    mode_l = (mode or "violation").lower()
+    if mode_l == "compliance":
+        depth_eff = (
+            settings.deterministic_graph_depth_compliance if graph_depth is None else graph_depth
+        )
+        max_supplement = settings.deterministic_max_supplement_compliance
+    else:
+        depth_eff = (
+            settings.deterministic_graph_depth_violation if graph_depth is None else graph_depth
+        )
+        max_supplement = settings.deterministic_max_supplement_violation
     # Legacy hook: deterministic_max_context_tokens no longer applies to merged chunks
-    # (supplement uses assemble_targeted_context per article). Kept for API stability.
+    # (supplement uses truncated summaries per article). Kept for API stability.
     _ = (
         settings.deterministic_max_context_tokens
         if max_context_tokens is None
@@ -202,7 +264,7 @@ def retrieve_deterministic(
         text_blob=query,
     )
     mapped_norm = {primary_article_number(a) for a in gdpr_map}
-    expanded = expand_articles(mapped_norm, depth=depth)
+    expanded = expand_articles(mapped_norm, depth=depth_eff)
     graph_only = expanded - mapped_norm
     all_art = set(mapped_norm) | set(expanded)
 
@@ -214,31 +276,45 @@ def retrieve_deterministic(
 
     all_article_union = all_art | sem_arts
     novel_arts = all_art - sem_arts
-    max_supplement = settings.max_deterministic_supplement_articles
-    injected_ordered = _pick_supplement_articles(
-        novel_arts=novel_arts,
-        mapped_norm=mapped_norm,
-        query_keywords=query_keywords,
-        cap=max_supplement,
-    )
+    if mode_l == "compliance":
+        topic_defs = load_article_map().get("topics") or {}
+        topic_defs = topic_defs if isinstance(topic_defs, dict) else {}
+        keys = _matched_topic_keys(list(topics.topics or []))
+        injected_ordered = prioritize_novel_articles(
+            novel_arts,
+            keys,
+            topic_defs,
+            max_supplement,
+            query_keywords=query_keywords,
+        )
+    else:
+        injected_ordered = _pick_supplement_articles(
+            novel_arts=novel_arts,
+            mapped_norm=mapped_norm,
+            query_keywords=query_keywords,
+            cap=max_supplement,
+        )
     injected_set = set(injected_ordered)
 
     logger.info("Semantic search found articles: %s", sorted(sem_arts, key=int))
     logger.info("Deterministic map found articles: %s", sorted(all_art, key=int))
     logger.info("Novel articles (deterministic only): %s", sorted(novel_arts, key=int))
     logger.info(
-        "Injecting %s supplementary articles (cap: %s)",
+        "Injecting %s supplementary articles (cap: %s, mode: %s)",
         len(injected_ordered),
         max_supplement,
+        mode_l,
     )
 
     meta: dict[str, Any] = {
+        "retrieval_mode": mode_l,
         "mapped_article_count": len(mapped_norm),
         "expanded_article_count": len(all_art),
         "recital_count": len(recitals),
         "novel_article_count": len(novel_arts),
         "supplement_injected_articles": injected_ordered,
         "max_deterministic_supplement_articles": max_supplement,
+        "deterministic_graph_depth": depth_eff,
     }
 
     article_sources: dict[str, list[str]] = {}
@@ -255,10 +331,7 @@ def retrieve_deterministic(
     supp_chunks: list[RetrievedChunk] = []
     supp_block = ""
     if injected_set:
-        supp_block = assemble_targeted_context(
-            injected_ordered,
-            query_keywords,
-        )
+        supp_block = assemble_supplementary_summaries(injected_ordered)
         raw_supp = _fulltext_chunks_for_articles(
             injected_set,
             tier="deterministic_supplement",

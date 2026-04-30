@@ -95,6 +95,35 @@ def get_article_text(article_number: str) -> str | None:
     return None
 
 
+def get_article_summary(article_number: str, max_chars: int = 500) -> str:
+    """
+    Return a truncated version of an article — first ``max_chars`` characters.
+
+    For supplementary deterministic context, keeps excerpts short so they do not
+    dominate semantic retrieval chunks.
+    """
+    full = get_article_text(article_number)
+    if full and len(full) > max_chars:
+        return full[:max_chars] + "..."
+    return full or ""
+
+
+def assemble_supplementary_summaries(
+    articles_ordered: list[str],
+    *,
+    max_chars_per_article: int = 500,
+) -> str:
+    """Join per-article title + truncated body for deterministic supplement chunks."""
+    parts: list[str] = []
+    for raw in articles_ordered:
+        num = primary_article_number(raw)
+        title = get_article_title(num)
+        summary = get_article_summary(num, max_chars=max_chars_per_article)
+        if summary:
+            parts.append(f"--- Article {num}: {title} ---\n{summary}\n")
+    return "\n".join(parts)
+
+
 def get_article_title(article_number: str) -> str:
     num = primary_article_number(article_number)
     store = load_article_store().get(num)
