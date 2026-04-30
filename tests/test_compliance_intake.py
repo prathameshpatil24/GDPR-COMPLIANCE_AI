@@ -49,6 +49,22 @@ def test_parse_structured_input_valid() -> None:
     assert dm.data_categories[0].name == "email"
 
 
+def test_dataflow_crosses_border_none_coerces_to_false() -> None:
+    """LLM JSON often sets crosses_border to null; must validate."""
+    d = _minimal_datamap_dict()
+    d["data_flows"] = [
+        {
+            "source": "app",
+            "destination": "S3 us-east-1",
+            "data_categories": ["email"],
+            "crosses_border": None,
+            "destination_country": "US",
+        }
+    ]
+    dm = parse_structured_input(d)
+    assert dm.data_flows[0].crosses_border is False
+
+
 def test_parse_structured_input_invalid() -> None:
     bad = _minimal_datamap_dict()
     bad["data_categories"][0]["sensitivity"] = "not_an_enum"

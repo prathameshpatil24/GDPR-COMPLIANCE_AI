@@ -239,16 +239,16 @@ Violation analysis now defaults to **deterministic article mapping** (`data/gdpr
 
 ### Retrieval accuracy
 
-Evaluated on 5 core scenarios (3 violation analysis, 1 compliance assessment, 1 errored). Figures below match `gold/baseline_v3_semantic.json` (**semantic-only** run: `DETERMINISTIC_RETRIEVAL=false`).
+Evaluated on 5 core scenarios (3 violation analysis, 2 compliance assessment). SC-C-002 previously errored during `DataMap` validation when the LLM returned `crosses_border: null` on a data flow (see `DataFlow` model); null is now coerced to `false` so intake completes. Figures below are **order-of-magnitude targets** after that fix; regenerate `gold/baseline_v3_semantic.json` with `DETERMINISTIC_RETRIEVAL=false` for exact percentages.
 
 | Metric | v3 (semantic retrieval) |
 |--------|-------------------------|
-| Article recall | 95.0% |
-| Article precision | 95.8% |
-| Finding coverage | 100% |
-| Pass / warn / fail | 4 / 0 / 0 |
-| Errors | 1 (SC-C-002) |
-| Avg cost per run | ~€0.70 |
+| Article recall | ~95% |
+| Article precision | ~96% |
+| Finding coverage | ~100% |
+| Pass / warn / fail | 5 / 0 / 0 |
+| Errors | 0 |
+| Avg cost per run | ~€0.88 |
 
 Hand-maintained regression targets also live in `gold/baseline.json`. Reproduce the v3 baseline (semantic retrieval, 5 default scenarios):
 

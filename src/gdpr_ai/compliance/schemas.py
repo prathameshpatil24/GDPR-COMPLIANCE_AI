@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from gdpr_ai.models import AnalysisConfidence, ConfidenceLevel
 
@@ -73,6 +74,16 @@ class DataFlow(BaseModel):
     data_categories: list[str]
     crosses_border: bool = False
     destination_country: str | None = None
+
+    @field_validator("crosses_border", mode="before")
+    @classmethod
+    def _coerce_crosses_border(cls, v: Any) -> bool:
+        """LLM extracts often emit null; treat as False."""
+        if v is None:
+            return False
+        if isinstance(v, bool):
+            return v
+        return bool(v)
 
 
 class ThirdParty(BaseModel):
