@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -16,6 +18,25 @@ from gdpr_ai.llm.client import (
 from gdpr_ai.prompts import load_prompt
 
 logger = logging.getLogger(__name__)
+
+
+def _normalize_verification_payload(data: dict[str, Any]) -> dict[str, Any]:
+    """Coerce list entries the model sometimes returns as objects into strings."""
+    out = dict(data)
+    for key in ("critical_gaps", "suggested_additions"):
+        raw = out.get(key)
+        if not isinstance(raw, list):
+            continue
+        normalized: list[str] = []
+        for x in raw:
+            if isinstance(x, str):
+                normalized.append(x)
+            elif isinstance(x, dict):
+                normalized.append(json.dumps(x, ensure_ascii=False))
+            else:
+                normalized.append(str(x))
+        out[key] = normalized
+    return out
 
 
 class ChecklistItem(BaseModel):
@@ -65,6 +86,8 @@ async def verify_completeness(
                 temperature=0.0,
             )
             data, _ = extract_json_object_with_repair(res.text)
+            if isinstance(data, dict):
+                data = _normalize_verification_payload(data)
             vr = VerificationResult.model_validate(data)
             miss = list(dict.fromkeys(vr.missing_articles))
             for row in vr.checklist:
